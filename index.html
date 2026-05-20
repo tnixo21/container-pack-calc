@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Container Pack Calculator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f2f5;color:#333;font-size:14px}
+.hdr{background:#1a1a2e;color:#fff;padding:14px 24px;display:flex;align-items:center;gap:14px}
+.hdr h1{font-size:1.3rem}
+.badge{background:#e94560;padding:3px 10px;border-radius:4px;font-size:.75rem;font-weight:700}
+.main{max-width:1500px;margin:0 auto;padding:18px}
+.card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.12);padding:18px;margin-bottom:16px}
+.card h2{font-size:.8rem;color:#777;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;border-bottom:1px solid #eee;padding-bottom:8px}
+.row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.82rem;color:#555}
+select,input[type=number],input[type=text]{padding:7px 10px;border:1px solid #ccc;border-radius:4px;font-size:.88rem;background:#fff;min-width:90px}
+select:focus,input:focus{outline:none;border-color:#4a90d9}
+btn,.btn{display:inline-block;padding:8px 18px;border:none;border-radius:4px;cursor:pointer;font-size:.88rem;font-weight:600}
+.btn-blue{background:#1a1a2e;color:#fff}.btn-blue:hover{background:#2d2d5e}
+.btn-red{background:#e94560;color:#fff}.btn-red:hover{background:#c73350}
+.btn-green{background:#2e7d32;color:#fff}.btn-green:hover{background:#1b5e20}
+.btn-sm{padding:4px 10px;font-size:.78rem}
+.btn-calc{font-size:1.05rem!important;padding:12px 40px!important}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+th{background:#f5f5f5;padding:7px 8px;text-align:left;font-weight:600;color:#555;border-bottom:2px solid #ddd;white-space:nowrap}
+td{padding:5px 7px;border-bottom:1px solid #eee;vertical-align:middle}
+tr:hover td{background:#fafafa}
+td input{width:100%;padding:3px 6px;border:1px solid transparent;border-radius:3px;font-size:.83rem;background:transparent}
+td input:focus{border-color:#4a90d9;background:#fff;outline:none}
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.stat{background:#fff;border-radius:8px;padding:14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.stat .n{font-size:1.8rem;font-weight:700;color:#1a1a2e}
+.stat .l{font-size:.72rem;color:#999;text-transform:uppercase;margin-top:2px}
+.ctn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(580px,1fr));gap:18px}
+.ctn-card{background:#f9f9f9;border:2px solid #ccc;border-radius:8px;padding:16px}
+.ctn-card h3{color:#1a1a2e;font-size:1rem;margin-bottom:6px}
+.ctn-meta{font-size:.78rem;color:#666;margin-bottom:10px}
+svg.fp{border:2px solid #888;border-radius:4px;display:block;background:#d0d0d0}
+.legend{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;font-size:.72rem}
+.li{display:flex;align-items:center;gap:4px}
+.sw{width:11px;height:11px;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2)}
+.warn{background:#fff3cd;border:1px solid #ffc107;padding:10px 14px;border-radius:6px;font-size:.85rem;margin-top:10px}
+.err{background:#f8d7da;border:1px solid #dc3545;padding:10px 14px;border-radius:6px;font-size:.85rem;margin-top:10px}
+.tag{display:inline-block;padding:2px 7px;border-radius:12px;font-size:.72rem;font-weight:600}
+.tag-r{background:#d4edda;color:#155724}
+.tag-n{background:#d1ecf1;color:#0c5460}
+#results{display:none}
+@media print{.no-print{display:none!important}.card{box-shadow:none;border:1px solid #ddd}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span style="font-size:1.5rem">📦</span>
+  <h1>Container Pack Calculator</h1>
+  <span class="badge">WAREHOUSE TOOL</span>
+</div>
+
+<div class="main">
+
+<!-- SETTINGS -->
+<div class="card no-print">
+  <h2>Container Settings</h2>
+  <div class="row">
+    <label>Container Type
+      <select id="ctnType" onchange="applyPreset()">
+        <option value="20std">20ft Standard — 590 × 235 cm</option>
+        <option value="40std">40ft Standard — 1204 × 235 cm</option>
+        <option value="40hc">40ft High Cube — 1204 × 235 cm</option>
+        <option value="custom">Custom</option>
+      </select>
+    </label>
+    <label>Floor Length (cm)
+      <input type="number" id="cL" value="590" min="100" max="2000">
+    </label>
+    <label>Floor Width (cm)
+      <input type="number" id="cW" value="235" min="100" max="500">
+    </label>
+    <label title="Minimum gap between skids">Gap / Clearance (cm)
+      <input type="number" id="gap" value="5" min="0" max="30">
+    </label>
+    <label>Allow 90° Rotation
+      <select id="rotate">
+        <option value="1">Yes (recommended)</option>
+        <option value="0">No</option>
+      </select>
+    </label>
+  </div>
+</div>
+
+<!-- PACKING LIST -->
+<div class="card">
+  <h2>Packing List</h2>
+  <div class="row no-print">
+    <label>Consignment #
+      <input type="text" id="consNo" value="" style="width:180px" placeholder="ENU100044662">
+    </label>
+    <button class="btn btn-blue" onclick="addRow()">+ Add Row</button>
+    <button class="btn btn-red" onclick="loadSample()">↺ Load Sample Data</button>
+    <button class="btn btn-blue" onclick="document.getElementById('csvIn').click()">⬆ Import CSV</button>
+    <button class="btn btn-sm" style="background:#888;color:#fff" onclick="clearAll()">✕ Clear All</button>
+    <input type="file" id="csvIn" accept=".csv" style="display:none" onchange="handleCSV(event)">
+    <span style="font-size:.75rem;color:#999;margin-left:8px">CSV format: CaseID, Description, Length(cm), Width(cm), Weight(kg), Qty</span>
+  </div>
+  <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th style="width:40px">#</th>
+        <th>Case ID</th>
+        <th>Description</th>
+        <th>Length (cm)</th>
+        <th>Width (cm)</th>
+        <th>Weight (kg)</th>
+        <th>Qty</th>
+        <th style="width:60px" class="no-print">Del</th>
+      </tr></thead>
+      <tbody id="tBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CALCULATE -->
+<div class="card no-print" style="text-align:center">
+  <button class="btn btn-blue btn-calc" onclick="calculate()">▶ Calculate Container Packing</button>
+  <button class="btn btn-green btn-calc" style="margin-left:12px" onclick="window.print()">🖨 Print Results</button>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="stat-grid">
+    <div class="stat"><div class="n" id="sC">—</div><div class="l">Containers Needed</div></div>
+    <div class="stat"><div class="n" id="sS">—</div><div class="l">Total Skids</div></div>
+    <div class="stat"><div class="n" id="sW">—</div><div class="l">Total Weight (kg)</div></div>
+    <div class="stat"><div class="n" id="sU">—</div><div class="l">Avg Floor Util %</div></div>
+    <div class="stat"><div class="n" id="sA">—</div><div class="l">Container Floor (m²)</div></div>
+  </div>
+  <div id="ctnResults" class="ctn-grid"></div>
+  <div id="oversized"></div>
+</div>
+
+</div>
+
+<script>
+const COLORS=[
+  '#4E79A7','#F28E2B','#E15759','#76B7B2','#59A14F',
+  '#EDC948','#B07AA1','#FF9DA7','#9C755F','#BAB0AC',
+  '#5DA5DA','#FAA43A','#60BD68','#F17CB0','#B2912F',
+  '#B276B2','#DECF3F','#F15854','#4D4D4D','#1B9E77',
+  '#D95F02','#7570B3','#E7298A','#66A61E','#E6AB02',
+  '#A6761D','#666666','#1F77B4','#AEC7E8','#FFBB78'
+];
+class MaxRects{
+  constructor(w,h){this.bW=w;this.bH=h;this.free=[{x:0,y:0,w,h}];this.packed=[]}
+  insert(item,gap,allowRot){
+    let best=null,bw=0,bh=0,bs=Infinity;
+    const g=gap,iw=item.w+g,ih=item.h+g;
+    for(const r of this.free){
+      if(iw<=r.w&&ih<=r.h){const s=Math.min(r.w-iw,r.h-ih);if(s<bs){bs=s;best=r;bw=item.w;bh=item.h}}
+      if(allowRot&&ih<=r.w&&iw<=r.h){const s=Math.min(r.w-ih,r.h-iw);if(s<bs){bs=s;best=r;bw=item.h;bh=item.w}}
+    }
+    if(!best)return false;
+    const p={...item,x:best.x,y:best.y,w:bw,h:bh,rotated:(bw!==item.w)};
+    this.packed.push(p);this._split(best,p,gap);this._prune();return true;
+  }
+  _split(used,pl,g){
+    const nf=[],pw=pl.w+g,ph=pl.h+g;
+    for(const r of this.free){
+      if(!this._ov(r,{x:pl.x,y:pl.y,w:pw,h:ph})){nf.push(r);continue}
+      if(pl.x>r.x)nf.push({x:r.x,y:r.y,w:pl.x-r.x,h:r.h});
+      if(pl.x+pw<r.x+r.w)nf.push({x:pl.x+pw,y:r.y,w:r.x+r.w-pl.x-pw,h:r.h});
+      if(pl.y>r.y)nf.push({x:r.x,y:r.y,w:r.w,h:pl.y-r.y});
+      if(pl.y+ph<r.y+r.h)nf.push({x:r.x,y:pl.y+ph,w:r.w,h:r.y+r.h-pl.y-ph});
+    }
+    this.free=nf;
+  }
+  _prune(){
+    const rm=new Set();
+    for(let i=0;i<this.free.length;i++)
+      for(let j=i+1;j<this.free.length;j++){
+        if(rm.has(i)||rm.has(j))continue;
+        if(this._in(this.free[j],this.free[i]))rm.add(i);
+        else if(this._in(this.free[i],this.free[j]))rm.add(j);
+      }
+    this.free=this.free.filter((_,i)=>!rm.has(i));
+  }
+  _ov(a,b){return!(a.x+a.w<=b.x||b.x+b.w<=a.x||a.y+a.h<=b.y||b.y+b.h<=a.y)}
+  _in(o,i){return o.x<=i.x&&o.y<=i.y&&o.x+o.w>=i.x+i.w&&o.y+o.h>=i.y+i.h}
+  util(){return this.packed.reduce((s,p)=>s+p.w*p.h,0)/(this.bW*this.bH)*100}
+}
+function pack(items,cW,cH,gap,rot){
+  const sorted=[...items].sort((a,b)=>(b.w*b.h)-(a.w*a.h));
+  const bins=[];let rem=sorted;
+  while(rem.length>0){
+    const bin=new MaxRects(cW,cH);const unpacked=[];
+    for(const it of rem){if(!bin.insert(it,gap,rot))unpacked.push(it);}
+    bins.push(bin);
+    if(unpacked.length===rem.length)break;
+    rem=unpacked;
+  }
+  return{bins,oversized:rem};
+}
+let rowId=0;
+function addRow(d={}){
+  const tb=document.getElementById('tBody');const n=tb.rows.length+1;const tr=tb.insertRow();
+  tr.dataset.id=rowId++;
+  tr.innerHTML=`
+    <td style="color:#999;text-align:center">${n}</td>
+    <td><input value="${d.caseId||''}" placeholder="G1431014"></td>
+    <td><input value="${d.desc||''}" placeholder="CARRIER"></td>
+    <td><input type="number" value="${d.l||''}" min="1" placeholder="120" style="width:70px"></td>
+    <td><input type="number" value="${d.w||''}" min="1" placeholder="100" style="width:70px"></td>
+    <td><input type="number" value="${d.wt||''}" min="0" placeholder="300" style="width:70px"></td>
+    <td><input type="number" value="${d.qty||1}" min="1" max="99" style="width:50px"></td>
+    <td class="no-print" style="text-align:center"><button class="btn btn-sm" style="background:#dc3545;color:#fff" onclick="delRow(this)">✕</button></td>`;
+}
+function delRow(btn){btn.closest('tr').remove();renum()}
+function renum(){document.querySelectorAll('#tBody tr').forEach((r,i)=>r.cells[0].textContent=i+1)}
+function clearAll(){if(confirm('Clear all rows?')){document.getElementById('tBody').innerHTML='';rowId=0}}
+function applyPreset(){
+  const p={'20std':[590,235],'40std':[1204,235],'40hc':[1204,235],'custom':null}[document.getElementById('ctnType').value];
+  if(p){document.getElementById('cL').value=p[0];document.getElementById('cW').value=p[1]}
+}
+function getItems(){
+  const rows=document.querySelectorAll('#tBody tr');const items=[];
+  rows.forEach((tr,idx)=>{
+    const inp=[...tr.querySelectorAll('input')];
+    const caseId=inp[0].value.trim()||`ITEM-${idx+1}`;
+    const desc=inp[1].value.trim()||'—';
+    const l=parseFloat(inp[2].value)||0,w=parseFloat(inp[3].value)||0;
+    const wt=parseFloat(inp[4].value)||0,qty=Math.max(1,parseInt(inp[5].value)||1);
+    if(l>0&&w>0)for(let q=0;q<qty;q++)
+      items.push({uid:items.length,caseId:qty>1?`${caseId}[${q+1}]`:caseId,desc,l,w,wt,w:l,h:w});
+  });
+  return items;
+}
+function handleCSV(e){
+  const f=e.target.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const lines=ev.target.result.split(/\r?\n/).filter(l=>l.trim());let start=0;
+    if(isNaN(lines[0].split(',')[0]))start=1;
+    lines.slice(start).forEach(line=>{
+      const c=line.split(',').map(x=>x.trim());
+      addRow({caseId:c[0],desc:c[1],l:c[2],w:c[3],wt:c[4],qty:c[5]||1});
+    });
+  };
+  reader.readAsText(f);e.target.value='';
+}
+function importCSV(){document.getElementById('csvIn').click()}
+function calculate(){
+  const items=getItems();
+  if(!items.length){alert('Add at least one item with valid dimensions.');return}
+  const cW=parseFloat(document.getElementById('cL').value);
+  const cH=parseFloat(document.getElementById('cW').value);
+  const gap=parseFloat(document.getElementById('gap').value)||0;
+  const rot=document.getElementById('rotate').value==='1';
+  const uniqueDescs=[...new Set(items.map(i=>i.desc))];const colorMap={};
+  uniqueDescs.forEach((d,i)=>colorMap[d]=COLORS[i%COLORS.length]);
+  items.forEach(it=>it.color=colorMap[it.desc]);
+  const{bins,oversized}=pack(items,cW,cH,gap,rot);
+  const totalWt=items.reduce((s,i)=>s+i.wt,0);
+  const avgUtil=bins.length?bins.reduce((s,b)=>s+b.util(),0)/bins.length:0;
+  document.getElementById('sC').textContent=bins.length;
+  document.getElementById('sS').textContent=items.length;
+  document.getElementById('sW').textContent=totalWt.toLocaleString();
+  document.getElementById('sU').textContent=avgUtil.toFixed(1)+'%';
+  document.getElementById('sA').textContent=((cW*cH)/10000).toFixed(2);
+  const cr=document.getElementById('ctnResults');cr.innerHTML='';
+  bins.forEach((bin,bi)=>cr.appendChild(renderContainer(bin,bi+1,cW,cH,gap)));
+  const od=document.getElementById('oversized');od.innerHTML='';
+  if(oversized.length)od.innerHTML=`<div class="err">⚠ <strong>${oversized.length} item(s) could not fit</strong> — dimensions exceed container floor even when rotated:<br>${oversized.map(i=>`<strong>${i.caseId}</strong> (${i.l}×${i.w} cm)`).join(', ')}</div>`;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+function renderContainer(bin,num,cW,cH,gap){
+  const div=document.createElement('div');div.className='ctn-card';
+  const util=bin.util(),packed=bin.packed,totalWt=packed.reduce((s,p)=>s+p.wt,0);
+  div.innerHTML=`<h3>Container ${num}</h3><div class="ctn-meta">${packed.length} skids &nbsp;|&nbsp; Floor util: <strong>${util.toFixed(1)}%</strong> &nbsp;|&nbsp; Weight: <strong>${totalWt.toLocaleString()} kg</strong> &nbsp;|&nbsp; Floor: ${cW}×${cH} cm</div>`;
+  const SVGW=560,SVGH=Math.round(SVGW*(cH/cW)),scale=SVGW/cW;
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width',SVGW);svg.setAttribute('height',SVGH);
+  svg.setAttribute('viewBox',`0 0 ${SVGW} ${SVGH}`);svg.classList.add('fp');
+  for(let x=0;x<=cW;x+=50){const ln=document.createElementNS('http://www.w3.org/2000/svg','line');ln.setAttribute('x1',x*scale);ln.setAttribute('y1',0);ln.setAttribute('x2',x*scale);ln.setAttribute('y2',SVGH);ln.setAttribute('stroke','#bbb');ln.setAttribute('stroke-width','0.5');svg.appendChild(ln);}
+  for(let y=0;y<=cH;y+=50){const ln=document.createElementNS('http://www.w3.org/2000/svg','line');ln.setAttribute('x1',0);ln.setAttribute('y1',y*scale);ln.setAttribute('x2',SVGW);ln.setAttribute('y2',y*scale);ln.setAttribute('stroke','#bbb');ln.setAttribute('stroke-width','0.5');svg.appendChild(ln);}
+  packed.forEach(p=>{
+    const rx=p.x*scale,ry=p.y*scale,rw=p.w*scale,rh=p.h*scale;
+    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',rx);rect.setAttribute('y',ry);rect.setAttribute('width',rw);rect.setAttribute('height',rh);
+    rect.setAttribute('fill',p.color);rect.setAttribute('stroke','#fff');rect.setAttribute('stroke-width','1.5');rect.setAttribute('rx','2');
+    svg.appendChild(rect);
+    if(rw>30&&rh>18){
+      const short=p.caseId.replace('G143','').slice(0,6);
+      const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+      txt.setAttribute('x',rx+rw/2);txt.setAttribute('y',ry+rh/2);txt.setAttribute('text-anchor','middle');txt.setAttribute('dominant-baseline','middle');
+      txt.setAttribute('font-size',Math.min(9,rw/short.length*1.5));txt.setAttribute('fill','#fff');txt.setAttribute('font-weight','700');txt.setAttribute('font-family','Arial');
+      txt.textContent=short;svg.appendChild(txt);
+      if(rh>26){
+        const dims=document.createElementNS('http://www.w3.org/2000/svg','text');
+        dims.setAttribute('x',rx+rw/2);dims.setAttribute('y',ry+rh/2+9);dims.setAttribute('text-anchor','middle');dims.setAttribute('dominant-baseline','middle');
+        dims.setAttribute('font-size',7);dims.setAttribute('fill','rgba(255,255,255,.8)');dims.setAttribute('font-family','Arial');
+        dims.textContent=`${p.w}×${p.h}`;svg.appendChild(dims);
+      }
+    }
+    if(p.rotated){const mrk=document.createElementNS('http://www.w3.org/2000/svg','text');mrk.setAttribute('x',rx+3);mrk.setAttribute('y',ry+10);mrk.setAttribute('font-size',8);mrk.setAttribute('fill','rgba(255,255,255,.7)');mrk.textContent='↻';svg.appendChild(mrk);}
+  });
+  const dl=document.createElementNS('http://www.w3.org/2000/svg','text');
+  dl.setAttribute('x',SVGW/2);dl.setAttribute('y',SVGH-3);dl.setAttribute('text-anchor','middle');dl.setAttribute('font-size',9);dl.setAttribute('fill','#666');dl.textContent=`← ${cW} cm →`;
+  svg.appendChild(dl);div.appendChild(svg);
+  const table=document.createElement('table');table.style.marginTop='10px';
+  table.innerHTML='<thead><tr><th>Case ID</th><th>Description</th><th>L×W (cm)</th><th>Weight (kg)</th><th>Status</th></tr></thead>';
+  const tbody=document.createElement('tbody');
+  packed.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="sw" style="display:inline-block;background:${p.color};margin-right:5px"></span>${p.caseId}</td><td>${p.desc}</td><td>${p.l}×${p.w}${p.rotated?' <span class="tag tag-r">rotated</span>':''}</td><td>${p.wt}</td><td><span class="tag tag-n">Placed @ ${p.x},${p.y}</span></td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);div.appendChild(table);return div;
+}
+function loadSample(){
+  if(document.querySelectorAll('#tBody tr').length>0)
+    if(!confirm('Replace current list with sample data?'))return;
+  document.getElementById('tBody').innerHTML='';rowId=0;
+  document.getElementById('consNo').value='ENU100044662';
+  [{caseId:'G1431014',desc:'CARRIER',l:102,w:120,wt:310},{caseId:'G1431015',desc:'CARRIER',l:102,w:120,wt:310},{caseId:'G1431016',desc:'CARRIER',l:102,w:120,wt:310},{caseId:'G1431017',desc:'CARRIER',l:102,w:120,wt:310},{caseId:'G1431018',desc:'CARRIER',l:102,w:120,wt:310},{caseId:'G1431019',desc:'CARRIER',l:102,w:120,wt:310},{caseId:'G1431020',desc:'CASE TFR',l:120,w:120,wt:670},{caseId:'G1431021',desc:'BRAKE SHOES',l:107,w:107,wt:230},{caseId:'G1431022',desc:'BRAKE SHOES',l:107,w:107,wt:240},{caseId:'G1431023',desc:'BRAKE SHOES',l:107,w:107,wt:230},{caseId:'G1431024',desc:'BRAKE SHOES',l:107,w:107,wt:230},{caseId:'G1431025',desc:'BRAKE SHOES',l:120,w:120,wt:250},{caseId:'G1431026',desc:'BRAKE SHOES',l:107,w:107,wt:230},{caseId:'G1431027',desc:'BRAKE SHOES',l:117,w:117,wt:230},{caseId:'G1431028',desc:'BRAKE SHOES',l:117,w:117,wt:230},{caseId:'G1431029',desc:'BRAKE SHOES',l:175,w:80,wt:665},{caseId:'G1431030',desc:'TANK',l:176,w:80,wt:80},{caseId:'G1431031',desc:'KIT',l:120,w:80,wt:240},{caseId:'G1431032',desc:'KIT',l:120,w:80,wt:240},{caseId:'G1431033',desc:'KIT',l:120,w:80,wt:240},{caseId:'G1431034',desc:'KIT',l:120,w:80,wt:240},{caseId:'G1431035',desc:'KIT',l:120,w:80,wt:240},{caseId:'G1431036',desc:'FM050P',l:110,w:76,wt:150},{caseId:'G1431037',desc:'HUB',l:113,w:113,wt:560},{caseId:'G1431038',desc:'END ASSY',l:110,w:110,wt:360},{caseId:'G1431039',desc:'AXLE',l:107,w:153,wt:1005},{caseId:'G1431040',desc:'AXLE',l:107,w:153,wt:590},{caseId:'G1431040B',desc:'AXLE',l:107,w:153,wt:590},{caseId:'G1431041',desc:'CARRIER',l:94,w:62,wt:140},{caseId:'G1431042',desc:'MISC',l:226,w:118,wt:693}]
+  .forEach(d=>addRow(d));
+}
+</script>
+</body>
+</html>
