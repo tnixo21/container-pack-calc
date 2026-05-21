@@ -15,13 +15,12 @@ body{font-family:Arial,sans-serif;background:#f0f2f5;color:#333;font-size:14px}
 .card h2{font-size:.8rem;color:#777;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;border-bottom:1px solid #eee;padding-bottom:8px}
 .row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}
 label{display:flex;flex-direction:column;gap:4px;font-size:.82rem;color:#555}
-select,input[type=number],input[type=text],input[type=password]{padding:7px 10px;border:1px solid #ccc;border-radius:4px;font-size:.88rem;background:#fff;min-width:90px}
+select,input[type=number],input[type=text]{padding:7px 10px;border:1px solid #ccc;border-radius:4px;font-size:.88rem;background:#fff;min-width:90px}
 select:focus,input:focus{outline:none;border-color:#4a90d9}
 .btn{display:inline-block;padding:8px 18px;border:none;border-radius:4px;cursor:pointer;font-size:.88rem;font-weight:600}
 .btn-blue{background:#1a1a2e;color:#fff}.btn-blue:hover{background:#2d2d5e}
 .btn-red{background:#e94560;color:#fff}.btn-red:hover{background:#c73350}
 .btn-green{background:#2e7d32;color:#fff}.btn-green:hover{background:#1b5e20}
-.btn-purple{background:#6a1b9a;color:#fff}.btn-purple:hover{background:#4a148c}
 .btn-sm{padding:4px 10px;font-size:.78rem}
 .btn-calc{font-size:1.05rem!important;padding:12px 40px!important}
 table{width:100%;border-collapse:collapse;font-size:.83rem}
@@ -41,29 +40,11 @@ td input:focus{border-color:#4a90d9;background:#fff;outline:none}
 svg.fp{border:2px solid #888;border-radius:4px;display:block;background:#d0d0d0}
 .warn{background:#fff3cd;border:1px solid #ffc107;padding:10px 14px;border-radius:6px;font-size:.85rem;margin-top:10px}
 .err{background:#f8d7da;border:1px solid #dc3545;padding:10px 14px;border-radius:6px;font-size:.85rem;margin-top:10px}
-.info{background:#d1ecf1;border:1px solid #bee5eb;padding:10px 14px;border-radius:6px;font-size:.85rem}
 .tag{display:inline-block;padding:2px 7px;border-radius:12px;font-size:.72rem;font-weight:600}
 .tag-r{background:#d4edda;color:#155724}
 .tag-n{background:#d1ecf1;color:#0c5460}
 .sw{width:11px;height:11px;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2)}
 #results{display:none}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
-.modal-bg.open{display:flex}
-.modal{background:#fff;border-radius:10px;padding:24px;width:min(700px,95vw);max-height:90vh;overflow-y:auto;position:relative}
-.modal h3{font-size:1rem;margin-bottom:14px;color:#1a1a2e}
-.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#999}
-.modal-close:hover{color:#333}
-.drop-zone{border:2px dashed #aaa;border-radius:8px;padding:30px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:14px}
-.drop-zone:hover,.drop-zone.over{border-color:#4a90d9;background:#f0f7ff}
-.drop-zone p{color:#888;font-size:.9rem;margin-top:6px}
-.api-key-row{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
-.api-key-row input{flex:1;min-width:200px}
-.spinner{display:inline-block;width:18px;height:18px;border:3px solid #ddd;border-top-color:#4a90d9;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.multi-img-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.multi-img-list .thumb{position:relative;width:80px;height:80px}
-.multi-img-list .thumb img{width:80px;height:80px;object-fit:cover;border-radius:4px;border:1px solid #ddd}
-.multi-img-list .thumb .rm{position:absolute;top:-5px;right:-5px;background:#dc3545;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 @media print{.no-print{display:none!important}.card{box-shadow:none;border:1px solid #ddd}}
 </style>
 </head>
@@ -105,7 +86,6 @@ svg.fp{border:2px solid #888;border-radius:4px;display:block;background:#d0d0d0}
   <div class="row no-print">
     <label>Consignment #<input type="text" id="consNo" value="" style="width:180px" placeholder="ENU100044662"></label>
     <button class="btn btn-blue" onclick="addRow()">+ Add Row</button>
-    <button class="btn btn-purple" onclick="openScanModal()">📷 Scan Photo</button>
     <button class="btn btn-blue" onclick="document.getElementById('csvIn').click()">⬆ Import CSV</button>
     <button class="btn btn-red" onclick="loadSample()">↺ Load Sample</button>
     <button class="btn btn-sm" style="background:#888;color:#fff" onclick="clearAll()">✕ Clear All</button>
@@ -141,42 +121,6 @@ svg.fp{border:2px solid #888;border-radius:4px;display:block;background:#d0d0d0}
   <div id="oversized"></div>
 </div>
 
-</div>
-
-<div class="modal-bg" id="scanModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeScanModal()">✕</button>
-    <h3>📷 Scan Packing List Photo</h3>
-    <p style="font-size:.82rem;color:#555;margin-bottom:12px">
-      Upload one or more photos of a packing list. The AI will read the table and fill in the rows automatically.
-      Works best with clear, straight-on shots. You can correct any values before calculating.
-    </p>
-    <div style="background:#f5f0ff;border:1px solid #c3a6ff;border-radius:6px;padding:12px;margin-bottom:14px">
-      <div style="font-size:.8rem;font-weight:600;color:#4a148c;margin-bottom:6px">🔑 Anthropic API Key</div>
-      <div class="api-key-row">
-        <input type="password" id="apiKey" placeholder="sk-ant-..." style="font-family:monospace">
-        <button class="btn btn-sm btn-purple" onclick="saveKey()">Save</button>
-        <button class="btn btn-sm" style="background:#ddd" onclick="clearKey()">Clear</button>
-      </div>
-      <div style="font-size:.75rem;color:#888">Stored only in your browser. Get a key at <strong>console.anthropic.com</strong> → API Keys. Each photo scan costs ~$0.002 USD.</div>
-    </div>
-    <div class="drop-zone" id="dropZone"
-         onclick="document.getElementById('imgIn').click()"
-         ondragover="event.preventDefault();this.classList.add('over')"
-         ondragleave="this.classList.remove('over')"
-         ondrop="handleDrop(event)">
-      <div style="font-size:2rem">📂</div>
-      <p>Click or drag &amp; drop photos here</p>
-      <p style="font-size:.75rem">Supports JPG, PNG, HEIC, WEBP — multiple files OK</p>
-    </div>
-    <input type="file" id="imgIn" accept="image/*" multiple style="display:none" onchange="handleImgSelect(event)">
-    <div class="multi-img-list" id="thumbList"></div>
-    <div id="scanStatus" style="margin-bottom:12px"></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-purple" id="scanBtn" onclick="runScan()" disabled>🔍 Extract from Photos</button>
-      <button class="btn" style="background:#eee;color:#333" onclick="closeScanModal()">Cancel</button>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -270,104 +214,6 @@ function handleCSV(e){
     });
   };
   reader.readAsText(f);e.target.value='';
-}
-let scanImages=[];
-function openScanModal(){
-  document.getElementById('scanModal').classList.add('open');
-  document.getElementById('apiKey').value=localStorage.getItem('anthropic_key')||'';
-  updateScanBtn();
-}
-function closeScanModal(){
-  document.getElementById('scanModal').classList.remove('open');
-  scanImages=[];
-  document.getElementById('thumbList').innerHTML='';
-  document.getElementById('scanStatus').innerHTML='';
-  document.getElementById('imgIn').value='';
-}
-function saveKey(){
-  const k=document.getElementById('apiKey').value.trim();
-  if(k){localStorage.setItem('anthropic_key',k);showStatus('info','API key saved to browser storage.');}
-  else showStatus('warn','Enter a key first.');
-}
-function clearKey(){localStorage.removeItem('anthropic_key');document.getElementById('apiKey').value='';showStatus('info','Key cleared.')}
-function updateScanBtn(){document.getElementById('scanBtn').disabled=scanImages.length===0}
-function handleImgSelect(e){[...e.target.files].forEach(f=>addImage(f));e.target.value='';}
-function handleDrop(e){
-  e.preventDefault();
-  document.getElementById('dropZone').classList.remove('over');
-  [...e.dataTransfer.files].filter(f=>f.type.startsWith('image/')).forEach(f=>addImage(f));
-}
-function addImage(file){
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    scanImages.push({dataUrl:ev.target.result,mimeType:file.type||'image/jpeg',name:file.name});
-    renderThumbs();updateScanBtn();
-  };
-  reader.readAsDataURL(file);
-}
-function removeImage(idx){scanImages.splice(idx,1);renderThumbs();updateScanBtn();}
-function renderThumbs(){
-  document.getElementById('thumbList').innerHTML=scanImages.map((img,i)=>
-    `<div class="thumb"><img src="${img.dataUrl}" title="${img.name}"><button class="rm" onclick="removeImage(${i})">✕</button></div>`
-  ).join('');
-}
-async function runScan(){
-  const key=(document.getElementById('apiKey').value.trim()||localStorage.getItem('anthropic_key')||'').trim();
-  if(!key){showStatus('err','Enter your Anthropic API key above first.');return}
-  if(!scanImages.length){showStatus('warn','Add at least one photo.');return}
-  const btn=document.getElementById('scanBtn');
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Scanning…';
-  try{
-    const allRows=[];
-    for(let i=0;i<scanImages.length;i++){
-      showStatus('info',`<span class="spinner"></span> Processing photo ${i+1} of ${scanImages.length}…`);
-      const rows=await extractFromImage(key,scanImages[i]);
-      allRows.push(...rows);
-    }
-    if(!allRows.length){showStatus('err','No rows extracted. Try a clearer, straight-on photo.');return}
-    allRows.forEach(r=>addRow(r));
-    showStatus('info',`✅ Added ${allRows.length} row(s). Review values then click Calculate.`);
-    setTimeout(()=>{closeScanModal();document.getElementById('tBody').scrollIntoView({behavior:'smooth'});},1800);
-  }catch(err){
-    showStatus('err',`Error: ${err.message}`);
-  }finally{
-    btn.disabled=false;btn.innerHTML='🔍 Extract from Photos';updateScanBtn();
-  }
-}
-async function extractFromImage(apiKey,img){
-  const base64=img.dataUrl.split(',')[1];
-  const prompt=`This is a photo of a freight/shipping packing list document.
-Extract every data row from the table. Return ONLY a JSON array — no explanation, no markdown, just raw JSON.
-Each object must have exactly these keys:
-  caseId  (string — case/item reference number)
-  desc    (string — item description)
-  l       (number — length in cm)
-  w       (number — width in cm)
-  wt      (number — weight in kg)
-  qty     (number — quantity, default 1)
-If a value is unreadable use null. Skip header rows and total/summary rows.
-Example: [{"caseId":"G1431014","desc":"CARRIER","l":102,"w":120,"wt":310,"qty":1}]`;
-  const resp=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'x-api-key':apiKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2048,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:img.mimeType,data:base64}},{type:'text',text:prompt}]}]})
-  });
-  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e.error?.message||`API error ${resp.status}`);}
-  const data=await resp.json();
-  let txt=(data.content?.[0]?.text||'').trim();
-  const fence=txt.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if(fence)txt=fence[1].trim();
-  const arr=txt.match(/\[[\s\S]*\]/);
-  if(!arr)throw new Error('AI did not return a JSON array. Try a clearer photo.');
-  return JSON.parse(arr[0]).filter(r=>r&&(r.l||r.w)).map(r=>({
-    caseId:String(r.caseId||'').trim()||'—',
-    desc:String(r.desc||'').trim()||'—',
-    l:parseFloat(r.l)||0,w:parseFloat(r.w)||0,
-    wt:parseFloat(r.wt)||0,qty:Math.max(1,parseInt(r.qty)||1)
-  }));
-}
-function showStatus(type,msg){
-  document.getElementById('scanStatus').innerHTML=`<div class="${type}">${msg}</div>`;
 }
 function calculate(){
   const items=getItems();
