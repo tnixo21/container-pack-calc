@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Container Pack Calculator</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -9,7 +9,7 @@ body{font-family:Arial,sans-serif;background:#f0f2f5;color:#333;font-size:14px}
 .hdr{background:#1a1a2e;color:#fff;padding:14px 24px;display:flex;align-items:center;gap:14px}
 .hdr h1{font-size:1.3rem}
 .badge{background:#e94560;padding:3px 10px;border-radius:4px;font-size:.75rem;font-weight:700}
-.main{max-width:1600px;margin:0 auto;padding:18px}
+.main{max-width:1700px;margin:0 auto;padding:18px}
 .card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.12);padding:18px;margin-bottom:16px}
 .card h2{font-size:.8rem;color:#777;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;border-bottom:1px solid #eee;padding-bottom:8px}
 .row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}
@@ -20,6 +20,9 @@ select:focus,input:focus{outline:none;border-color:#4a90d9}
 .btn-blue{background:#1a1a2e;color:#fff}.btn-blue:hover{background:#2d2d5e}
 .btn-red{background:#e94560;color:#fff}.btn-red:hover{background:#c73350}
 .btn-green{background:#2e7d32;color:#fff}.btn-green:hover{background:#1b5e20}
+.btn-purple{background:#6a1b9a;color:#fff}.btn-purple:hover{background:#4a1270}
+.btn-orange{background:#e65100;color:#fff}.btn-orange:hover{background:#bf360c}
+.btn-teal{background:#00695c;color:#fff}.btn-teal:hover{background:#004d40}
 .btn-sm{padding:4px 10px;font-size:.78rem}
 .btn-calc{font-size:1.05rem!important;padding:12px 40px!important}
 table{width:100%;border-collapse:collapse;font-size:.83rem}
@@ -39,8 +42,12 @@ td select:focus{border-color:#4a90d9;background:#fff;outline:none}
 .ctn-card{background:#f9f9f9;border:2px solid #ccc;border-radius:8px;padding:16px}
 .ctn-card.has-dg{border-color:#e67e22}
 .ctn-card.dg-conflict{border-color:#dc3545;background:#fff5f5}
+.ctn-card.weight-over{border-color:#9c27b0}
 .ctn-card h3{color:#1a1a2e;font-size:1rem;margin-bottom:6px}
 .ctn-meta{font-size:.78rem;color:#666;margin-bottom:8px}
+.ctn-type-chip{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:700;margin-right:6px;color:#fff}
+.chip-primary{background:#1a1a2e}
+.chip-secondary{background:#6a1b9a}
 svg.fp{border:2px solid #888;border-radius:4px;display:block;background:#d0d0d0}
 .warn{background:#fff3cd;border:1px solid #ffc107;padding:10px 14px;border-radius:6px;font-size:.85rem;margin-top:8px}
 .err{background:#f8d7da;border:1px solid #dc3545;padding:10px 14px;border-radius:6px;font-size:.85rem;margin-top:8px}
@@ -58,7 +65,11 @@ details.dg-ref{margin-top:12px}
 details.dg-ref summary{cursor:pointer;font-size:.8rem;color:#777;padding:6px 0}
 details.dg-ref table th,details.dg-ref table td{padding:4px 8px;border:1px solid #ddd;font-size:.75rem}
 details.dg-ref table th{background:#f5f5f5}
+.fleet-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;padding:10px 14px;background:#f8f8f8;border-radius:6px;margin-bottom:8px;border:1px solid #e0e0e0}
+.fleet-label{font-size:.72rem;font-weight:700;min-width:72px;padding-bottom:2px}
+.divider{border:none;border-top:1px solid #eee;margin:14px 0}
 #results{display:none}
+#exportBtn{display:none}
 @media print{.no-print{display:none!important}.card{box-shadow:none;border:1px solid #ddd}}
 </style>
 </head>
@@ -72,21 +83,54 @@ details.dg-ref table th{background:#f5f5f5}
 
 <div class="main">
 
-<!-- SETTINGS -->
+<!-- CONTAINER FLEET SETTINGS -->
 <div class="card no-print">
-  <h2>Container Settings</h2>
-  <div class="row">
-    <label>Container Type
-      <select id="ctnType" onchange="applyPreset()">
-        <option value="20std">20ft Standard — 590 × 235 cm</option>
-        <option value="40std">40ft Standard — 1204 × 235 cm</option>
-        <option value="40hc">40ft High Cube — 1204 × 235 cm</option>
+  <h2>Container Fleet</h2>
+
+  <div style="margin-bottom:12px">
+    <label style="flex-direction:row;align-items:center;gap:8px;display:inline-flex;cursor:pointer">
+      <input type="checkbox" id="useFleet" onchange="toggleFleet()" style="width:16px;height:16px">
+      <span style="font-size:.85rem;color:#333">Use mixed container sizes (primary + secondary type)</span>
+    </label>
+  </div>
+
+  <!-- Primary -->
+  <div class="fleet-row">
+    <span class="fleet-label" style="color:#1a1a2e">PRIMARY</span>
+    <label>Type
+      <select id="ctnType" onchange="applyPreset('ctnType','pL','pW','pH','pMaxWt')">
+        <option value="20std">20ft Standard</option>
+        <option value="40std">40ft Standard</option>
+        <option value="40hc">40ft High Cube</option>
         <option value="custom">Custom</option>
       </select>
     </label>
-    <label>Floor Length (cm)<input type="number" id="cL" value="590" min="100" max="2000"></label>
-    <label>Floor Width (cm)<input type="number" id="cW" value="235" min="100" max="500"></label>
-    <label title="Minimum gap between skids">Gap / Clearance (cm)<input type="number" id="gap" value="5" min="0" max="30"></label>
+    <label>Floor L (cm)<input type="number" id="pL" value="590" min="100" max="2000" style="width:90px"></label>
+    <label>Floor W (cm)<input type="number" id="pW" value="235" min="100" max="500" style="width:90px"></label>
+    <label>Int. Height (cm)<input type="number" id="pH" value="239" min="50" max="400" style="width:90px"></label>
+    <label>Max Payload (kg)<input type="number" id="pMaxWt" value="21700" min="500" max="50000" style="width:100px"></label>
+  </div>
+
+  <!-- Secondary (hidden until fleet enabled) -->
+  <div class="fleet-row" id="secondaryRow" style="display:none;border-style:dashed;border-color:#9c64c8">
+    <span class="fleet-label" style="color:#6a1b9a">SECONDARY</span>
+    <label>Type
+      <select id="ctnType2" onchange="applyPreset('ctnType2','sL','sW','sH','sMaxWt')">
+        <option value="40std">40ft Standard</option>
+        <option value="40hc">40ft High Cube</option>
+        <option value="20std">20ft Standard</option>
+        <option value="custom">Custom</option>
+      </select>
+    </label>
+    <label>Floor L (cm)<input type="number" id="sL" value="1204" min="100" max="2000" style="width:90px"></label>
+    <label>Floor W (cm)<input type="number" id="sW" value="235" min="100" max="500" style="width:90px"></label>
+    <label>Int. Height (cm)<input type="number" id="sH" value="239" min="50" max="400" style="width:90px"></label>
+    <label>Max Payload (kg)<input type="number" id="sMaxWt" value="26680" min="500" max="50000" style="width:100px"></label>
+  </div>
+
+  <hr class="divider">
+  <div class="row" style="margin-bottom:0">
+    <label>Gap / Clearance (cm)<input type="number" id="gap" value="5" min="0" max="30" style="width:90px"></label>
     <label>Allow 90° Rotation
       <select id="rotate">
         <option value="1">Yes (recommended)</option>
@@ -99,29 +143,37 @@ details.dg-ref table th{background:#f5f5f5}
 <!-- PACKING LIST -->
 <div class="card">
   <h2>Packing List</h2>
-  <div class="row no-print">
+  <div class="row no-print" style="flex-wrap:wrap;gap:8px">
     <label>Consignment #<input type="text" id="consNo" value="" style="width:180px" placeholder="ENU100044662"></label>
     <button class="btn btn-blue" onclick="addRow()">+ Add Row</button>
     <button class="btn btn-blue" onclick="document.getElementById('csvIn').click()">⬆ Import CSV</button>
+    <button class="btn btn-purple" onclick="pasteFromClipboard()">📋 Paste from Excel</button>
+    <button class="btn btn-green" onclick="saveToStorage()">💾 Save</button>
+    <button class="btn btn-teal" onclick="loadFromStorage()">📂 Load Saved</button>
     <button class="btn btn-red" onclick="loadSample()">↺ Load Sample</button>
     <button class="btn btn-sm" style="background:#888;color:#fff" onclick="clearAll()">✕ Clear All</button>
     <input type="file" id="csvIn" accept=".csv" style="display:none" onchange="handleCSV(event)">
-    <span style="font-size:.75rem;color:#999">CSV: CaseID, Desc, L, W, Wt, Qty, Client, Excl(0/1), DG</span>
   </div>
+  <div style="font-size:.72rem;color:#999;margin-bottom:10px">
+    CSV / Excel paste columns: CaseID, Desc, L, W, H, Wt, Qty, Client, Excl(0/1), DG Class, UN #
+  </div>
+
   <div style="overflow-x:auto">
     <table>
       <thead><tr>
-        <th style="width:32px">#</th>
+        <th style="width:30px">#</th>
         <th>Case ID</th>
         <th>Description</th>
-        <th>Length (cm)</th>
-        <th>Width (cm)</th>
-        <th>Weight (kg)</th>
-        <th style="width:50px">Qty</th>
-        <th style="width:68px" title="Client / consignee identifier. Items with the same ID are packed together first.">Client</th>
-        <th style="width:40px" title="Exclusive: this piece cannot share a container with any other client's freight.">Excl</th>
-        <th style="width:130px" title="Dangerous Goods class (IMDG). Incompatible classes will not be placed in the same container.">DG Class</th>
-        <th style="width:52px" class="no-print">Del</th>
+        <th style="width:68px">L (cm)</th>
+        <th style="width:68px">W (cm)</th>
+        <th style="width:68px" title="Item height — checked against container internal height">H (cm)</th>
+        <th style="width:72px">Wt (kg)</th>
+        <th style="width:46px">Qty</th>
+        <th style="width:64px" title="Client ID — same IDs are packed together">Client</th>
+        <th style="width:38px" title="Exclusive: cannot share container with other clients">Excl</th>
+        <th style="width:128px" title="IMDG dangerous goods class">DG Class</th>
+        <th style="width:80px" title="UN number for DG cargo (e.g. UN1203)">UN #</th>
+        <th style="width:48px" class="no-print">Del</th>
       </tr></thead>
       <tbody id="tBody"></tbody>
     </table>
@@ -149,7 +201,7 @@ details.dg-ref table th{background:#f5f5f5}
       <tr><td>9</td><td>Misc DG</td><td>1</td></tr>
     </table>
     </div>
-    <p style="margin-top:6px;color:#888;font-size:.72rem">⚠ Simplified guide based on IMDG code. Always verify against current IMDG Code and carrier requirements for specific UN numbers and packing groups.</p>
+    <p style="margin-top:6px;color:#888;font-size:.72rem">⚠ Simplified guide. Always verify against current IMDG Code and carrier requirements for specific UN numbers and packing groups.</p>
   </details>
 </div>
 
@@ -157,6 +209,7 @@ details.dg-ref table th{background:#f5f5f5}
 <div class="card no-print" style="text-align:center">
   <button class="btn btn-blue btn-calc" onclick="calculate()">▶ Calculate Container Packing</button>
   <button class="btn btn-green btn-calc" style="margin-left:12px" onclick="window.print()">🖨 Print Results</button>
+  <button class="btn btn-orange btn-calc" id="exportBtn" style="margin-left:12px" onclick="exportCSV()">⬇ Export CSV</button>
 </div>
 
 <!-- RESULTS -->
@@ -174,10 +227,10 @@ details.dg-ref table th{background:#f5f5f5}
   <div id="oversized"></div>
 </div>
 
-</div>
+</div><!-- /main -->
 
 <script>
-const ITEM_COLORS=[
+const ITEM_COLORS = [
   '#4E79A7','#F28E2B','#E15759','#76B7B2','#59A14F',
   '#EDC948','#B07AA1','#FF9DA7','#9C755F','#BAB0AC',
   '#5DA5DA','#FAA43A','#60BD68','#F17CB0','#B2912F',
@@ -185,135 +238,183 @@ const ITEM_COLORS=[
   '#D95F02','#7570B3','#E7298A','#66A61E','#E6AB02',
   '#A6761D','#666666','#1F77B4','#AEC7E8','#FFBB78'
 ];
-const CLIENT_COLORS=['#1565c0','#2e7d32','#6a1b9a','#c62828','#e65100','#00695c','#4527a0','#558b2f','#37474f','#795548'];
-const clientColorMap={};let clientColorIdx=0;
-function clientColor(c){
-  if(!clientColorMap[c])clientColorMap[c]=CLIENT_COLORS[clientColorIdx++%CLIENT_COLORS.length];
+const CLIENT_COLORS = ['#1565c0','#2e7d32','#6a1b9a','#c62828','#e65100','#00695c','#4527a0','#558b2f','#37474f','#795548'];
+const clientColorMap = {}; let clientColorIdx = 0;
+function clientColor(c) {
+  if (!clientColorMap[c]) clientColorMap[c] = CLIENT_COLORS[clientColorIdx++ % CLIENT_COLORS.length];
   return clientColorMap[c];
 }
 
-const DG_INCOMPAT={
-  '1':  ['2.1','2.3','3','4.1','4.2','4.3','5.1','5.2','6.1','6.2','7','8','9'],
-  '2.1':['1','3'],
-  '2.2':[],
-  '2.3':['1','6.1'],
-  '3':  ['1','2.1','5.1','5.2'],
-  '4.1':['1','5.1','5.2'],
-  '4.2':['1','4.3','5.1','5.2'],
-  '4.3':['1','4.2','5.1','8'],
-  '5.1':['1','3','4.1','4.2','4.3'],
-  '5.2':['1','3','4.1','4.2'],
-  '6.1':['1','2.3'],
-  '6.2':['1'],
-  '7':  ['1'],
-  '8':  ['1','4.3'],
-  '9':  ['1']
+const PRESETS = {
+  '20std': [590,  235, 239, 21700],
+  '40std': [1204, 235, 239, 26680],
+  '40hc':  [1204, 235, 269, 26680],
+  'custom': null
 };
-function dgConflict(a,b){
-  if(!a||!b||a==='none'||b==='none')return false;
-  return(DG_INCOMPAT[a]||[]).includes(b)||(DG_INCOMPAT[b]||[]).includes(a);
+
+function applyPreset(selId, lId, wId, hId, maxWtId) {
+  const p = PRESETS[document.getElementById(selId).value];
+  if (p) {
+    document.getElementById(lId).value = p[0];
+    document.getElementById(wId).value = p[1];
+    document.getElementById(hId).value = p[2];
+    document.getElementById(maxWtId).value = p[3];
+  }
 }
 
-class MaxRects{
-  constructor(w,h){this.bW=w;this.bH=h;this.free=[{x:0,y:0,w,h}];this.packed=[]}
-  insert(item,gap,allowRot){
-    let best=null,bw=0,bh=0,bs=Infinity;
-    const g=gap,iw=item.w+g,ih=item.h+g;
-    for(const r of this.free){
-      if(iw<=r.w&&ih<=r.h){const s=Math.min(r.w-iw,r.h-ih);if(s<bs){bs=s;best=r;bw=item.w;bh=item.h}}
-      if(allowRot&&ih<=r.w&&iw<=r.h){const s=Math.min(r.w-ih,r.h-iw);if(s<bs){bs=s;best=r;bw=item.h;bh=item.w}}
-    }
-    if(!best)return false;
-    const p={...item,x:best.x,y:best.y,w:bw,h:bh,rotated:(bw!==item.w)};
-    this.packed.push(p);this._split(p,gap);this._prune();return true;
+function toggleFleet() {
+  const on = document.getElementById('useFleet').checked;
+  document.getElementById('secondaryRow').style.display = on ? 'flex' : 'none';
+}
+
+function getContainerTypes() {
+  const types = [{
+    label: 'Primary',
+    chipClass: 'chip-primary',
+    l: parseFloat(document.getElementById('pL').value) || 590,
+    w: parseFloat(document.getElementById('pW').value) || 235,
+    h: parseFloat(document.getElementById('pH').value) || 239,
+    maxWt: parseFloat(document.getElementById('pMaxWt').value) || Infinity
+  }];
+  if (document.getElementById('useFleet').checked) {
+    types.push({
+      label: 'Secondary',
+      chipClass: 'chip-secondary',
+      l: parseFloat(document.getElementById('sL').value) || 1204,
+      w: parseFloat(document.getElementById('sW').value) || 235,
+      h: parseFloat(document.getElementById('sH').value) || 239,
+      maxWt: parseFloat(document.getElementById('sMaxWt').value) || Infinity
+    });
   }
-  _split(pl,g){
-    const nf=[],pw=pl.w+g,ph=pl.h+g;
-    for(const r of this.free){
-      if(!this._ov(r,{x:pl.x,y:pl.y,w:pw,h:ph})){nf.push(r);continue}
-      if(pl.x>r.x)nf.push({x:r.x,y:r.y,w:pl.x-r.x,h:r.h});
-      if(pl.x+pw<r.x+r.w)nf.push({x:pl.x+pw,y:r.y,w:r.x+r.w-pl.x-pw,h:r.h});
-      if(pl.y>r.y)nf.push({x:r.x,y:r.y,w:r.w,h:pl.y-r.y});
-      if(pl.y+ph<r.y+r.h)nf.push({x:r.x,y:pl.y+ph,w:r.w,h:r.y+r.h-pl.y-ph});
+  return types;
+}
+
+const DG_INCOMPAT = {
+  '1':   ['2.1','2.3','3','4.1','4.2','4.3','5.1','5.2','6.1','6.2','7','8','9'],
+  '2.1': ['1','3'], '2.2': [], '2.3': ['1','6.1'],
+  '3':   ['1','2.1','5.1','5.2'], '4.1': ['1','5.1','5.2'],
+  '4.2': ['1','4.3','5.1','5.2'], '4.3': ['1','4.2','5.1','8'],
+  '5.1': ['1','3','4.1','4.2','4.3'], '5.2': ['1','3','4.1','4.2'],
+  '6.1': ['1','2.3'], '6.2': ['1'], '7': ['1'], '8': ['1','4.3'], '9': ['1']
+};
+function dgConflict(a, b) {
+  if (!a || !b || a === 'none' || b === 'none') return false;
+  return (DG_INCOMPAT[a] || []).includes(b) || (DG_INCOMPAT[b] || []).includes(a);
+}
+
+class MaxRects {
+  constructor(w, h) { this.bW = w; this.bH = h; this.free = [{x:0,y:0,w,h}]; this.packed = []; }
+  insert(item, gap, allowRot) {
+    let best = null, bw = 0, bh = 0, bs = Infinity;
+    const iw = item.w + gap, ih = item.h + gap;
+    for (const r of this.free) {
+      if (iw <= r.w && ih <= r.h) { const s = Math.min(r.w-iw, r.h-ih); if (s < bs) { bs=s; best=r; bw=item.w; bh=item.h; } }
+      if (allowRot && ih <= r.w && iw <= r.h) { const s = Math.min(r.w-ih, r.h-iw); if (s < bs) { bs=s; best=r; bw=item.h; bh=item.w; } }
     }
-    this.free=nf;
+    if (!best) return false;
+    const p = {...item, x:best.x, y:best.y, w:bw, h:bh, rotated:(bw !== item.w)};
+    this.packed.push(p); this._split(p, gap); this._prune(); return true;
   }
-  _prune(){
-    const rm=new Set();
-    for(let i=0;i<this.free.length;i++)
-      for(let j=i+1;j<this.free.length;j++){
-        if(rm.has(i)||rm.has(j))continue;
-        if(this._in(this.free[j],this.free[i]))rm.add(i);
-        else if(this._in(this.free[i],this.free[j]))rm.add(j);
+  _split(pl, g) {
+    const nf = [], pw = pl.w+g, ph = pl.h+g;
+    for (const r of this.free) {
+      if (!this._ov(r, {x:pl.x,y:pl.y,w:pw,h:ph})) { nf.push(r); continue; }
+      if (pl.x > r.x)       nf.push({x:r.x,      y:r.y, w:pl.x-r.x,         h:r.h});
+      if (pl.x+pw < r.x+r.w) nf.push({x:pl.x+pw,  y:r.y, w:r.x+r.w-pl.x-pw, h:r.h});
+      if (pl.y > r.y)       nf.push({x:r.x, y:r.y,      w:r.w, h:pl.y-r.y});
+      if (pl.y+ph < r.y+r.h) nf.push({x:r.x, y:pl.y+ph, w:r.w, h:r.y+r.h-pl.y-ph});
+    }
+    this.free = nf;
+  }
+  _prune() {
+    const rm = new Set();
+    for (let i = 0; i < this.free.length; i++)
+      for (let j = i+1; j < this.free.length; j++) {
+        if (rm.has(i) || rm.has(j)) continue;
+        if (this._in(this.free[j], this.free[i])) rm.add(i);
+        else if (this._in(this.free[i], this.free[j])) rm.add(j);
       }
-    this.free=this.free.filter((_,i)=>!rm.has(i));
+    this.free = this.free.filter((_, i) => !rm.has(i));
   }
-  _ov(a,b){return!(a.x+a.w<=b.x||b.x+b.w<=a.x||a.y+a.h<=b.y||b.y+b.h<=a.y)}
-  _in(o,i){return o.x<=i.x&&o.y<=i.y&&o.x+o.w>=i.x+i.w&&o.y+o.h>=i.y+i.h}
-  util(){return this.packed.reduce((s,p)=>s+p.w*p.h,0)/(this.bW*this.bH)*100}
+  _ov(a, b) { return !(a.x+a.w <= b.x || b.x+b.w <= a.x || a.y+a.h <= b.y || b.y+b.h <= a.y); }
+  _in(o, i) { return o.x <= i.x && o.y <= i.y && o.x+o.w >= i.x+i.w && o.y+o.h >= i.y+i.h; }
+  util() { return this.packed.reduce((s, p) => s + p.w*p.h, 0) / (this.bW * this.bH) * 100; }
 }
 
-function canPlace(bin,item){
-  if(bin.lockedClient!==null&&bin.lockedClient!==item.client)return false;
-  if(item.exclusive&&bin.clients.size>0&&![...bin.clients].every(c=>c===item.client))return false;
-  if(item.dg&&item.dg!=='none')
-    for(const d of bin.dgClasses)if(dgConflict(item.dg,d))return false;
+function canPlace(bin, item) {
+  if (bin.lockedClient !== null && bin.lockedClient !== item.client) return false;
+  if (item.exclusive && bin.clients.size > 0 && ![...bin.clients].every(c => c === item.client)) return false;
+  if (item.dg && item.dg !== 'none')
+    for (const d of bin.dgClasses) if (dgConflict(item.dg, d)) return false;
+  if ((bin.currentWt + (item.wt || 0)) > bin.ctnType.maxWt) return false;
   return true;
 }
 
-function packAdvanced(items,cW,cH,gap,rot){
-  const groups={};
-  items.forEach(it=>{(groups[it.client]=groups[it.client]||[]).push(it);});
-  const clientOrder=Object.keys(groups).sort((a,b)=>{
-    const ae=groups[a].some(i=>i.exclusive),be=groups[b].some(i=>i.exclusive);
-    if(ae!==be)return ae?-1:1;
-    return groups[b].reduce((s,i)=>s+i.w*i.h,0)-groups[a].reduce((s,i)=>s+i.w*i.h,0);
+function packAdvanced(items, containerTypes, gap, rot) {
+  const groups = {};
+  items.forEach(it => { (groups[it.client] = groups[it.client] || []).push(it); });
+  const clientOrder = Object.keys(groups).sort((a, b) => {
+    const ae = groups[a].some(i => i.exclusive), be = groups[b].some(i => i.exclusive);
+    if (ae !== be) return ae ? -1 : 1;
+    return groups[b].reduce((s,i) => s+i.w*i.h, 0) - groups[a].reduce((s,i) => s+i.w*i.h, 0);
   });
-  const sorted=[];
-  clientOrder.forEach(c=>sorted.push(...[...groups[c]].sort((a,b)=>b.w*b.h-a.w*a.h)));
-  const binState=[];
-  const oversized=[];
-  for(const item of sorted){
-    let placed=false;
-    const tryOrder=[...binState].sort((a,b)=>
-      (b.clients.has(item.client)?1:0)-(a.clients.has(item.client)?1:0));
-    for(const bin of tryOrder){
-      if(!canPlace(bin,item))continue;
-      if(bin.mr.insert(item,gap,rot)){
+  const sorted = [];
+  clientOrder.forEach(c => sorted.push(...[...groups[c]].sort((a,b) => b.w*b.h - a.w*a.h)));
+  const binState = [];
+  const oversized = [];
+  for (const item of sorted) {
+    let placed = false;
+    const tryOrder = [...binState].sort((a, b) =>
+      (b.clients.has(item.client) ? 1 : 0) - (a.clients.has(item.client) ? 1 : 0));
+    for (const bin of tryOrder) {
+      if (!canPlace(bin, item)) continue;
+      if (bin.mr.insert(item, gap, rot)) {
         bin.clients.add(item.client);
-        if(item.dg&&item.dg!=='none')bin.dgClasses.add(item.dg);
-        if(item.exclusive)bin.lockedClient=item.client;
-        placed=true;break;
+        if (item.dg && item.dg !== 'none') bin.dgClasses.add(item.dg);
+        if (item.exclusive) bin.lockedClient = item.client;
+        bin.currentWt += (item.wt || 0);
+        placed = true; break;
       }
     }
-    if(!placed){
-      const bin={mr:new MaxRects(cW,cH),clients:new Set(),dgClasses:new Set(),lockedClient:null};
-      if(bin.mr.insert(item,gap,rot)){
-        bin.clients.add(item.client);
-        if(item.dg&&item.dg!=='none')bin.dgClasses.add(item.dg);
-        if(item.exclusive)bin.lockedClient=item.client;
-        binState.push(bin);placed=true;
-      }else{oversized.push(item);}
+    if (!placed) {
+      for (const ct of containerTypes) {
+        if ((item.wt || 0) > ct.maxWt) continue;
+        const bin = { mr: new MaxRects(ct.l, ct.w), clients: new Set(), dgClasses: new Set(), lockedClient: null, currentWt: 0, ctnType: ct };
+        if (bin.mr.insert(item, gap, rot)) {
+          bin.clients.add(item.client);
+          if (item.dg && item.dg !== 'none') bin.dgClasses.add(item.dg);
+          if (item.exclusive) bin.lockedClient = item.client;
+          bin.currentWt += (item.wt || 0);
+          binState.push(bin);
+          placed = true; break;
+        }
+      }
+      if (!placed) oversized.push(item);
     }
   }
-  return{bins:binState.map(b=>b.mr),binMeta:binState,oversized};
+  return { bins: binState.map(b => b.mr), binMeta: binState, oversized };
 }
 
-function getFCLLCL(binMeta,items,cW,cH){
-  const used=items.reduce((s,i)=>s+i.w*i.h,0);
-  const pct=(used/(cW*cH)*100).toFixed(0);
-  const hasDG=items.some(i=>i.dg&&i.dg!=='none');
-  const hasExcl=items.some(i=>i.exclusive);
-  const multi=binMeta.length>1;
-  if(multi)return{rec:'FCL',cls:'tag-fcl',detail:`Requires ${binMeta.length} full containers — book as FCL.`};
-  if(hasDG)return{rec:'FCL',cls:'tag-fcl',detail:'Contains Dangerous Goods — FCL required. Verify carrier DG acceptance, placarding and documentation.'};
-  if(hasExcl)return{rec:'FCL',cls:'tag-fcl',detail:'Exclusive client segregation in effect — dedicated FCL container required.'};
-  if(+pct>=70)return{rec:'FCL',cls:'tag-fcl',detail:`High floor utilisation (${pct}%) — FCL is cost-effective and gives full control of the container.`};
-  if(+pct<35)return{rec:'LCL',cls:'tag-lcl',detail:`Low floor utilisation (${pct}% of one container) — LCL consolidation will likely be cheaper. Confirm with your freight forwarder.`};
-  return{rec:'FCL or LCL',cls:'tag-either',detail:`Moderate floor utilisation (${pct}%) — compare FCL vs LCL rates with your freight forwarder. FCL gives more control; LCL may save cost.`};
+function getFCLLCL(binMeta, items, containerTypes) {
+  const ct = containerTypes[0];
+  const used = items.reduce((s, i) => s + i.w*i.h, 0);
+  const pct = (used / (ct.l * ct.w) * 100).toFixed(0);
+  const hasDG = items.some(i => i.dg && i.dg !== 'none');
+  const hasExcl = items.some(i => i.exclusive);
+  if (binMeta.length > 1)
+    return { rec: 'FCL', cls: 'tag-fcl', detail: `Requires ${binMeta.length} full containers — book as FCL.` };
+  if (hasDG)
+    return { rec: 'FCL', cls: 'tag-fcl', detail: 'Contains Dangerous Goods — FCL required. Verify carrier DG acceptance, placarding and documentation.' };
+  if (hasExcl)
+    return { rec: 'FCL', cls: 'tag-fcl', detail: 'Exclusive client segregation in effect — dedicated FCL container required.' };
+  if (+pct >= 70)
+    return { rec: 'FCL', cls: 'tag-fcl', detail: `High floor utilisation (${pct}%) — FCL is cost-effective and gives full container control.` };
+  if (+pct < 35)
+    return { rec: 'LCL', cls: 'tag-lcl', detail: `Low floor utilisation (${pct}% of one container) — LCL consolidation will likely be cheaper. Confirm with your freight forwarder.` };
+  return { rec: 'FCL or LCL', cls: 'tag-either', detail: `Moderate floor utilisation (${pct}%) — compare FCL vs LCL rates with your freight forwarder.` };
 }
 
-const DG_OPTS=[
+const DG_OPTS = [
   ['none','— None —'],['1','Class 1 – Explosives'],['2.1','Class 2.1 – Flammable Gas'],
   ['2.2','Class 2.2 – Non-flammable Gas'],['2.3','Class 2.3 – Toxic Gas'],
   ['3','Class 3 – Flammable Liquid'],['4.1','Class 4.1 – Flammable Solid'],
@@ -322,69 +423,67 @@ const DG_OPTS=[
   ['6.1','Class 6.1 – Toxic'],['6.2','Class 6.2 – Infectious'],
   ['7','Class 7 – Radioactive'],['8','Class 8 – Corrosive'],['9','Class 9 – Misc DG']
 ];
-function dgSel(val='none'){
-  return`<select>${DG_OPTS.map(([v,t])=>`<option value="${v}"${v===val?' selected':''}>${t}</option>`).join('')}</select>`;
+function dgSel(val = 'none') {
+  return '<select>' + DG_OPTS.map(([v,t]) => `<option value="${v}"${v===val?' selected':''}>${t}</option>`).join('') + '</select>';
 }
 
-let rowId=0;
-function addRow(d={}){
-  const tb=document.getElementById('tBody');
-  const n=tb.rows.length+1;
-  const tr=tb.insertRow();
-  tr.dataset.id=rowId++;
-  tr.innerHTML=`
+let rowId = 0;
+function addRow(d = {}) {
+  const tb = document.getElementById('tBody');
+  const n = tb.rows.length + 1;
+  const tr = tb.insertRow();
+  tr.dataset.id = rowId++;
+  tr.innerHTML = `
     <td style="color:#999;text-align:center">${n}</td>
     <td><input type="text" value="${esc(d.caseId||'')}" placeholder="G1431014"></td>
     <td><input type="text" value="${esc(d.desc||'')}" placeholder="CARRIER"></td>
-    <td><input type="number" value="${d.l||""}" min="1" placeholder="120" style="width:66px"></td>
-    <td><input type="number" value="${d.w||""}" min="1" placeholder="100" style="width:66px"></td>
-    <td><input type="number" value="${d.wt||""}" min="0" placeholder="300" style="width:66px"></td>
-    <td><input type="number" value="${d.qty||1}" min="1" max="99" style="width:46px"></td>
-    <td><input type="text" value="${esc(d.client||'1')}" placeholder="1" style="width:52px" title="Client / consignee ID"></td>
-    <td style="text-align:center"><input type="checkbox"${d.exclusive?' checked':''} title="Exclusive — cannot share container with other clients"></td>
+    <td><input type="number" value="${d.l||\'\'}" min="1" placeholder="120" style="width:58px"></td>
+    <td><input type="number" value="${d.w||\'\'}" min="1" placeholder="100" style="width:58px"></td>
+    <td><input type="number" value="${d.h||\'\'}" min="1" placeholder="120" style="width:58px" title="Item height (cm)"></td>
+    <td><input type="number" value="${d.wt||\'\'}" min="0" placeholder="300" style="width:64px"></td>
+    <td><input type="number" value="${d.qty||1}" min="1" max="99" style="width:42px"></td>
+    <td><input type="text" value="${esc(d.client||'1')}" placeholder="1" style="width:46px"></td>
+    <td style="text-align:center"><input type="checkbox"${d.exclusive?' checked':''} title="Exclusive"></td>
     <td>${dgSel(d.dg||'none')}</td>
+    <td><input type="text" value="${esc(d.un||'')}" placeholder="UN1234" style="width:70px"></td>
     <td class="no-print" style="text-align:center">
       <button class="btn btn-sm" style="background:#dc3545;color:#fff" onclick="delRow(this)">✕</button>
     </td>`;
 }
-function esc(s){return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;')}
-function delRow(btn){btn.closest('tr').remove();renum()}
-function renum(){document.querySelectorAll('#tBody tr').forEach((r,i)=>r.cells[0].textContent=i+1)}
-function clearAll(){
-  if(confirm('Clear all rows?')){
-    document.getElementById('tBody').innerHTML='';
-    rowId=0;clientColorIdx=0;
-    Object.keys(clientColorMap).forEach(k=>delete clientColorMap[k]);
+function esc(s) { return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function delRow(btn) { btn.closest('tr').remove(); renum(); }
+function renum() { document.querySelectorAll('#tBody tr').forEach((r,i) => r.cells[0].textContent = i+1); }
+function clearAll() {
+  if (confirm('Clear all rows?')) {
+    document.getElementById('tBody').innerHTML = '';
+    rowId = 0; clientColorIdx = 0;
+    Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
   }
 }
-function applyPreset(){
-  const p={'20std':[590,235],'40std':[1204,235],'40hc':[1204,235],'custom':null}[document.getElementById('ctnType').value];
-  if(p){document.getElementById('cL').value=p[0];document.getElementById('cW').value=p[1]}
-}
 
-function getItems(){
-  const rows=document.querySelectorAll('#tBody tr');
-  const items=[];
-  rows.forEach((tr,idx)=>{
-    const inp=[...tr.querySelectorAll('input')];
-    const sel=tr.querySelector('select');
-    const caseId=inp[0].value.trim()||`ITEM-${idx+1}`;
-    const desc=inp[1].value.trim()||'—';
-    const l=parseFloat(inp[2].value)||0;
-    const wDim=parseFloat(inp[3].value)||0;
-    const wt=parseFloat(inp[4].value)||0;
-    const qty=Math.max(1,parseInt(inp[5].value)||1);
-    const client=(inp[6].value.trim()||'1').toUpperCase();
-    const exclusive=inp[7].checked;
-    const dg=sel?sel.value:'none';
-    if(l>0&&wDim>0){
-      for(let q=0;q<qty;q++){
+function getItems() {
+  const items = [];
+  document.querySelectorAll('#tBody tr').forEach((tr, idx) => {
+    const inp = [...tr.querySelectorAll('input')];
+    const sel = tr.querySelector('select');
+    const caseId = inp[0].value.trim() || `ITEM-${idx+1}`;
+    const desc   = inp[1].value.trim() || '—';
+    const l      = parseFloat(inp[2].value) || 0;
+    const wDim   = parseFloat(inp[3].value) || 0;
+    const itemH  = parseFloat(inp[4].value) || 0;
+    const wt     = parseFloat(inp[5].value) || 0;
+    const qty    = Math.max(1, parseInt(inp[6].value) || 1);
+    const client = (inp[7].value.trim() || '1').toUpperCase();
+    const exclusive = inp[8].checked;
+    const dg = sel ? sel.value : 'none';
+    const un = inp[9].value.trim();
+    if (l > 0 && wDim > 0) {
+      for (let q = 0; q < qty; q++) {
         items.push({
-          uid:items.length,
-          caseId:qty>1?`${caseId}[${q+1}]`:caseId,
-          desc,origL:l,origW:wDim,
-          w:l,h:wDim,
-          wt,client,exclusive,dg
+          uid: items.length,
+          caseId: qty > 1 ? `${caseId}[${q+1}]` : caseId,
+          desc, origL: l, origW: wDim, itemH,
+          w: l, h: wDim, wt, client, exclusive, dg, un
         });
       }
     }
@@ -392,202 +491,330 @@ function getItems(){
   return items;
 }
 
-function handleCSV(e){
-  const f=e.target.files[0];if(!f)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    const lines=ev.target.result.split(/\r?\n/).filter(l=>l.trim());
-    let start=isNaN(lines[0].split(',')[0])?1:0;
-    lines.slice(start).forEach(line=>{
-      const c=line.split(',').map(x=>x.trim());
-      addRow({caseId:c[0],desc:c[1],l:c[2],w:c[3],wt:c[4],qty:c[5]||1,
-              client:c[6]||'1',exclusive:c[7]==='1',dg:c[8]||'none'});
+const STORAGE_KEY = 'cpc_saved_list';
+function saveToStorage() {
+  const data = [];
+  document.querySelectorAll('#tBody tr').forEach(tr => {
+    const inp = [...tr.querySelectorAll('input')];
+    const sel = tr.querySelector('select');
+    data.push({
+      caseId: inp[0].value, desc: inp[1].value,
+      l: inp[2].value, w: inp[3].value, h: inp[4].value,
+      wt: inp[5].value, qty: inp[6].value, client: inp[7].value,
+      exclusive: inp[8].checked, dg: sel ? sel.value : 'none', un: inp[9].value
+    });
+  });
+  const save = { consNo: document.getElementById('consNo').value, rows: data, ts: new Date().toISOString() };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(save));
+  alert(`Saved ${data.length} rows at ${new Date().toLocaleTimeString()}.`);
+}
+function loadFromStorage() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) { alert('No saved list found.'); return; }
+  const save = JSON.parse(raw);
+  if (!confirm(`Load saved list (${save.rows.length} rows, saved ${new Date(save.ts).toLocaleString()})?\nThis will replace the current list.`)) return;
+  document.getElementById('tBody').innerHTML = '';
+  rowId = 0; clientColorIdx = 0;
+  Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
+  document.getElementById('consNo').value = save.consNo || '';
+  save.rows.forEach(r => addRow(r));
+}
+
+async function pasteFromClipboard() {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (!text.trim()) { alert('Clipboard is empty.'); return; }
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    let added = 0;
+    lines.forEach(line => {
+      const c = line.split('\t').map(x => x.trim());
+      if (c.length < 3) return;
+      addRow({ caseId:c[0], desc:c[1], l:c[2], w:c[3]||'', h:c[4]||'', wt:c[5]||'', qty:c[6]||1,
+               client:c[7]||'1', exclusive:c[8]==='1', dg:c[9]||'none', un:c[10]||'' });
+      added++;
+    });
+    alert(`Pasted ${added} row(s) from clipboard.`);
+  } catch(e) {
+    alert('Could not read clipboard.\nPlease use Import CSV instead, or grant clipboard permission when prompted.');
+  }
+}
+
+function handleCSV(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.split(/\r?\n/).filter(l => l.trim());
+    const start = isNaN(lines[0].split(',')[0]) ? 1 : 0;
+    lines.slice(start).forEach(line => {
+      const c = line.split(',').map(x => x.trim());
+      addRow({ caseId:c[0], desc:c[1], l:c[2], w:c[3], h:c[4]||'', wt:c[5]||'', qty:c[6]||1,
+               client:c[7]||'1', exclusive:c[8]==='1', dg:c[9]||'none', un:c[10]||'' });
     });
   };
-  reader.readAsText(f);e.target.value='';
+  reader.readAsText(f); e.target.value = '';
 }
 
-function calculate(){
-  clientColorIdx=0;
-  Object.keys(clientColorMap).forEach(k=>delete clientColorMap[k]);
-  const items=getItems();
-  if(!items.length){alert('Add at least one item with valid dimensions.');return}
-  const cW=parseFloat(document.getElementById('cL').value);
-  const cH=parseFloat(document.getElementById('cW').value);
-  const gap=parseFloat(document.getElementById('gap').value)||0;
-  const rot=document.getElementById('rotate').value==='1';
-  const descs=[...new Set(items.map(i=>i.desc))];
-  const colorMap={};descs.forEach((d,i)=>colorMap[d]=ITEM_COLORS[i%ITEM_COLORS.length]);
-  items.forEach(it=>it.color=colorMap[it.desc]);
-  const{bins,binMeta,oversized}=packAdvanced(items,cW,cH,gap,rot);
-  const totalWt=items.reduce((s,i)=>s+i.wt,0);
-  const avgUtil=bins.length?bins.reduce((s,b)=>s+b.util(),0)/bins.length:0;
-  const fcl=getFCLLCL(binMeta,items,cW,cH);
-  document.getElementById('sC').textContent=bins.length;
-  document.getElementById('sS').textContent=items.length;
-  document.getElementById('sW').textContent=totalWt.toLocaleString();
-  document.getElementById('sU').textContent=avgUtil.toFixed(1)+'%';
-  document.getElementById('sA').textContent=((cW*cH)/10000).toFixed(2);
-  document.getElementById('sFCL').innerHTML=`<span class="tag ${fcl.cls}" style="font-size:.95rem;padding:4px 10px">${fcl.rec}</span>`;
-  const bannerCls=fcl.rec==='LCL'?'warn':'info';
-  document.getElementById('fclBanner').innerHTML=
-    `<div class="${bannerCls}"><strong>Shipment Mode: ${fcl.rec}</strong> — ${fcl.detail}</div>`;
-  const cr=document.getElementById('ctnResults');cr.innerHTML='';
-  binMeta.forEach((meta,i)=>cr.appendChild(renderContainer(bins[i],meta,i+1,cW,cH)));
-  const od=document.getElementById('oversized');od.innerHTML='';
-  if(oversized.length)
-    od.innerHTML=`<div class="err">⚠ <strong>${oversized.length} item(s) too large</strong> — could not fit even when rotated: ${oversized.map(i=>`<strong>${i.caseId}</strong> (${i.origL}×${i.origW} cm)`).join(', ')}</div>`;
-  document.getElementById('results').style.display='block';
-  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+let _lastResult = null;
+function exportCSV() {
+  if (!_lastResult) return;
+  const { bins, binMeta } = _lastResult;
+  const rows = [['Container','Type','Floor L (cm)','Floor W (cm)','Int H (cm)','Max Payload (kg)',
+                  'Cargo Wt (kg)','Floor Util %','Case ID','Description',
+                  'L (cm)','W (cm)','H (cm)','Weight (kg)','Client','Exclusive','DG Class','UN #','Rotated','Pos X','Pos Y']];
+  binMeta.forEach((meta, i) => {
+    const bin = bins[i];
+    const ct = meta.ctnType;
+    bin.packed.forEach(p => {
+      rows.push([
+        i+1, ct.label, ct.l, ct.w, ct.h,
+        ct.maxWt === Infinity ? '' : ct.maxWt,
+        meta.currentWt, bin.util().toFixed(1) + '%',
+        p.caseId, p.desc, p.origL, p.origW, p.itemH || '', p.wt || 0,
+        p.client, p.exclusive ? 'Yes' : 'No',
+        p.dg === 'none' ? '' : p.dg, p.un || '',
+        p.rotated ? 'Yes' : 'No', p.x, p.y
+      ]);
+    });
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = `${document.getElementById('consNo').value || 'packing'}_plan.csv`;
+  a.click();
 }
 
-function renderContainer(bin,meta,num,cW,cH){
-  const div=document.createElement('div');
-  div.className='ctn-card';
-  const packed=bin.packed;
-  const util=bin.util();
-  const totalWt=packed.reduce((s,p)=>s+p.wt,0);
-  const clients=[...meta.clients].sort();
-  const dgClasses=[...meta.dgClasses].sort();
-  const hasDG=dgClasses.length>0;
-  const dgConflicts=[];
-  if(hasDG){
-    const arr=[...meta.dgClasses];
-    for(let i=0;i<arr.length;i++)
-      for(let j=i+1;j<arr.length;j++)
-        if(dgConflict(arr[i],arr[j]))dgConflicts.push(`Class ${arr[i]} + Class ${arr[j]}`);
+function calculate() {
+  clientColorIdx = 0;
+  Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
+  const items = getItems();
+  if (!items.length) { alert('Add at least one item with valid dimensions.'); return; }
+  const containerTypes = getContainerTypes();
+  const gap = parseFloat(document.getElementById('gap').value) || 0;
+  const rot = document.getElementById('rotate').value === '1';
+  const descs = [...new Set(items.map(i => i.desc))];
+  const colorMap = {}; descs.forEach((d,i) => colorMap[d] = ITEM_COLORS[i % ITEM_COLORS.length]);
+  items.forEach(it => it.color = colorMap[it.desc]);
+  const { bins, binMeta, oversized } = packAdvanced(items, containerTypes, gap, rot);
+  _lastResult = { bins, binMeta, oversized, containerTypes };
+  const totalWt = items.reduce((s, i) => s + i.wt, 0);
+  const avgUtil = bins.length ? bins.reduce((s,b) => s + b.util(), 0) / bins.length : 0;
+  const fcl = getFCLLCL(binMeta, items, containerTypes);
+  const ct0 = containerTypes[0];
+  document.getElementById('sC').textContent = bins.length;
+  document.getElementById('sS').textContent = items.length;
+  document.getElementById('sW').textContent = totalWt.toLocaleString();
+  document.getElementById('sU').textContent = avgUtil.toFixed(1) + '%';
+  document.getElementById('sA').textContent = ((ct0.l * ct0.w) / 10000).toFixed(2);
+  document.getElementById('sFCL').innerHTML = `<span class="tag ${fcl.cls}" style="font-size:.95rem;padding:4px 10px">${fcl.rec}</span>`;
+  document.getElementById('fclBanner').innerHTML =
+    `<div class="${fcl.rec==='LCL'?'warn':'info'}"><strong>Shipment Mode: ${fcl.rec}</strong> — ${fcl.detail}</div>`;
+  const cr = document.getElementById('ctnResults'); cr.innerHTML = '';
+  binMeta.forEach((meta, i) => cr.appendChild(renderContainer(bins[i], meta, i+1)));
+  const od = document.getElementById('oversized'); od.innerHTML = '';
+  const msgs = [];
+  if (oversized.length)
+    msgs.push(`<div class="err">⚠ <strong>${oversized.length} item(s) could not be placed</strong> (too large for any container floor even when rotated): ${oversized.map(i=>`<strong>${i.caseId}</strong> (${i.origL}×${i.origW} cm)`).join(', ')}</div>`);
+  const maxContainerH = Math.max(...containerTypes.map(ct => ct.h));
+  const heightBad = items.filter(i => i.itemH > 0 && i.itemH > maxContainerH);
+  if (heightBad.length)
+    msgs.push(`<div class="err">⚠ <strong>${heightBad.length} item(s) exceed all container heights</strong> (max ${maxContainerH} cm): ${heightBad.map(i=>`<strong>${i.caseId}</strong> (H=${i.itemH} cm)`).join(', ')} — verify clearance with carrier.</div>`);
+  od.innerHTML = msgs.join('');
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('exportBtn').style.display = 'inline-block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderContainer(bin, meta, num) {
+  const div = document.createElement('div');
+  div.className = 'ctn-card';
+  const packed = bin.packed;
+  const util = bin.util();
+  const ct = meta.ctnType;
+  const totalWt = meta.currentWt;
+  const weightPct = ct.maxWt < Infinity ? (totalWt / ct.maxWt * 100).toFixed(0) : null;
+  const weightOver = ct.maxWt < Infinity && totalWt > ct.maxWt;
+  const clients = [...meta.clients].sort();
+  const dgClasses = [...meta.dgClasses].sort();
+  const hasDG = dgClasses.length > 0;
+  const dgConflicts = [];
+  if (hasDG) {
+    const arr = [...meta.dgClasses];
+    for (let i = 0; i < arr.length; i++)
+      for (let j = i+1; j < arr.length; j++)
+        if (dgConflict(arr[i], arr[j])) dgConflicts.push(`Class ${arr[i]} + Class ${arr[j]}`);
   }
-  if(dgConflicts.length)div.classList.add('dg-conflict');
-  else if(hasDG)div.classList.add('has-dg');
-  const clientBadges=clients.map(c=>{
-    const cc=clientColor(c);
-    return`<span class="tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}55">Client ${c}</span>`;
+  if (weightOver) div.classList.add('weight-over');
+  if (dgConflicts.length) div.classList.add('dg-conflict');
+  else if (hasDG) div.classList.add('has-dg');
+  const clientBadges = clients.map(c => {
+    const cc = clientColor(c);
+    return `<span class="tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}55">Client ${c}</span>`;
   }).join('');
-  const dgBadges=dgClasses.map(d=>`<span class="tag tag-dg">DG ${d}</span>`).join('');
-  const exclBadge=meta.lockedClient?`<span class="tag tag-excl">Exclusive — Client ${meta.lockedClient}</span>`:'';
-  div.innerHTML=`
-    <h3>Container ${num}</h3>
-    <div class="ctn-meta">${packed.length} skids &nbsp;|&nbsp; Floor util: <strong>${util.toFixed(1)}%</strong> &nbsp;|&nbsp; Weight: <strong>${totalWt.toLocaleString()} kg</strong> &nbsp;|&nbsp; ${cW}×${cH} cm</div>
+  const dgBadges = dgClasses.map(d => `<span class="tag tag-dg">DG ${d}</span>`).join('');
+  const exclBadge = meta.lockedClient ? `<span class="tag tag-excl">Exclusive — Client ${meta.lockedClient}</span>` : '';
+  const wtStr = ct.maxWt < Infinity
+    ? `${totalWt.toLocaleString()} / ${ct.maxWt.toLocaleString()} kg (${weightPct}%)`
+    : `${totalWt.toLocaleString()} kg`;
+  div.innerHTML = `
+    <h3><span class="ctn-type-chip ${ct.chipClass}">${ct.label}</span>Container ${num}</h3>
+    <div class="ctn-meta">${packed.length} skids &nbsp;|&nbsp; Floor: <strong>${util.toFixed(1)}%</strong> &nbsp;|&nbsp; Weight: <strong>${wtStr}</strong> &nbsp;|&nbsp; ${ct.l}×${ct.w} cm, H ${ct.h} cm</div>
     <div style="margin-bottom:8px;line-height:1.8">${clientBadges}${exclBadge}${dgBadges}</div>`;
-  if(dgConflicts.length){
-    const w=document.createElement('div');w.className='err';
-    w.innerHTML=`⚠ <strong>DG Conflict</strong> — incompatible classes in same container: ${dgConflicts.join(', ')}. Segregation required — review packing.`;
+  if (weightOver) {
+    const w = document.createElement('div'); w.className = 'err';
+    w.innerHTML = `⚠ <strong>Weight Limit Exceeded</strong> — ${totalWt.toLocaleString()} kg loaded, max payload is ${ct.maxWt.toLocaleString()} kg. Split this cargo or upgrade to a higher-capacity container.`;
     div.appendChild(w);
-  }else if(hasDG){
-    const w=document.createElement('div');w.className='warn';
-    w.innerHTML=`⚠ <strong>DG Cargo Present</strong> (${dgBadges.replace(/ style="[^"]*"/g,'')}) — verify carrier acceptance, placarding, IMDG documentation and stowage requirements before booking.`;
+  } else if (weightPct !== null && +weightPct > 90) {
+    const w = document.createElement('div'); w.className = 'warn';
+    w.innerHTML = `⚠ <strong>Weight Near Limit</strong> — ${weightPct}% of max payload (${totalWt.toLocaleString()} / ${ct.maxWt.toLocaleString()} kg). Verify gross weight with carrier before booking.`;
     div.appendChild(w);
   }
-  const SVGW=560,SVGH=Math.round(SVGW*(cH/cW)),sc=SVGW/cW;
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('width',SVGW);svg.setAttribute('height',SVGH);
-  svg.setAttribute('viewBox',`0 0 ${SVGW} ${SVGH}`);svg.classList.add('fp');
-  for(let x=0;x<=cW;x+=50){const ln=document.createElementNS('http://www.w3.org/2000/svg','line');ln.setAttribute('x1',x*sc);ln.setAttribute('y1',0);ln.setAttribute('x2',x*sc);ln.setAttribute('y2',SVGH);ln.setAttribute('stroke','#bbb');ln.setAttribute('stroke-width','0.5');svg.appendChild(ln);}
-  for(let y=0;y<=cH;y+=50){const ln=document.createElementNS('http://www.w3.org/2000/svg','line');ln.setAttribute('x1',0);ln.setAttribute('y1',y*sc);ln.setAttribute('x2',SVGW);ln.setAttribute('y2',y*sc);ln.setAttribute('stroke','#bbb');ln.setAttribute('stroke-width','0.5');svg.appendChild(ln);}
-  packed.forEach(p=>{
-    const rx=p.x*sc,ry=p.y*sc,rw=p.w*sc,rh=p.h*sc;
-    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    rect.setAttribute('x',rx);rect.setAttribute('y',ry);rect.setAttribute('width',rw);rect.setAttribute('height',rh);
-    rect.setAttribute('fill',p.color);rect.setAttribute('stroke','#fff');rect.setAttribute('stroke-width','1.5');rect.setAttribute('rx','2');
+  if (dgConflicts.length) {
+    const w = document.createElement('div'); w.className = 'err';
+    w.innerHTML = `⚠ <strong>DG Conflict</strong> — incompatible classes in same container: ${dgConflicts.join(', ')}. Segregation required — review packing.`;
+    div.appendChild(w);
+  } else if (hasDG) {
+    const dgUnList = [...new Set(packed.filter(p => p.dg && p.dg !== 'none' && p.un).map(p => `${p.un} (Class ${p.dg})`))]
+    const w = document.createElement('div'); w.className = 'warn';
+    w.innerHTML = `⚠ <strong>DG Cargo Present</strong> (${dgBadges}) — verify carrier DG acceptance, placarding and IMDG documentation before booking.${dgUnList.length ? '<br>UN Numbers: ' + dgUnList.join(', ') : ''}`;
+    div.appendChild(w);
+  }
+  const hViol = packed.filter(p => p.itemH > 0 && p.itemH > ct.h);
+  if (hViol.length) {
+    const w = document.createElement('div'); w.className = 'err';
+    w.innerHTML = `⚠ <strong>Height Violation</strong> — ${hViol.map(p=>`${p.caseId} (H=${p.itemH} cm)`).join(', ')} exceed this container's internal height of ${ct.h} cm.`;
+    div.appendChild(w);
+  }
+  const SVGW = 560, SVGH = Math.max(80, Math.round(SVGW * (ct.w / ct.l))), sc = SVGW / ct.l;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('width', SVGW); svg.setAttribute('height', SVGH);
+  svg.setAttribute('viewBox', `0 0 ${SVGW} ${SVGH}`); svg.classList.add('fp');
+  for (let x = 0; x <= ct.l; x += 50) {
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    ln.setAttribute('x1',x*sc); ln.setAttribute('y1',0); ln.setAttribute('x2',x*sc); ln.setAttribute('y2',SVGH);
+    ln.setAttribute('stroke','#bbb'); ln.setAttribute('stroke-width','0.5'); svg.appendChild(ln);
+  }
+  for (let y = 0; y <= ct.w; y += 50) {
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    ln.setAttribute('x1',0); ln.setAttribute('y1',y*sc); ln.setAttribute('x2',SVGW); ln.setAttribute('y2',y*sc);
+    ln.setAttribute('stroke','#bbb'); ln.setAttribute('stroke-width','0.5'); svg.appendChild(ln);
+  }
+  packed.forEach(p => {
+    const rx = p.x*sc, ry = p.y*sc, rw = p.w*sc, rh = p.h*sc;
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x',rx); rect.setAttribute('y',ry); rect.setAttribute('width',rw); rect.setAttribute('height',rh);
+    rect.setAttribute('fill',p.color); rect.setAttribute('stroke','#fff'); rect.setAttribute('stroke-width','1.5'); rect.setAttribute('rx','2');
     svg.appendChild(rect);
-    if(p.dg&&p.dg!=='none'){
-      const dr=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      dr.setAttribute('x',rx+1.5);dr.setAttribute('y',ry+1.5);dr.setAttribute('width',Math.max(0,rw-3));dr.setAttribute('height',Math.max(0,rh-3));
-      dr.setAttribute('fill','none');dr.setAttribute('stroke','#dc3545');dr.setAttribute('stroke-width','2');dr.setAttribute('stroke-dasharray','4,2');dr.setAttribute('rx','2');
+    if (p.itemH > 0 && p.itemH > ct.h) {
+      const hr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      hr.setAttribute('x',rx+2); hr.setAttribute('y',ry+2); hr.setAttribute('width',Math.max(0,rw-4)); hr.setAttribute('height',Math.max(0,rh-4));
+      hr.setAttribute('fill','none'); hr.setAttribute('stroke','#ff9800'); hr.setAttribute('stroke-width','2.5'); hr.setAttribute('rx','2');
+      svg.appendChild(hr);
+    }
+    if (p.dg && p.dg !== 'none') {
+      const dr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      dr.setAttribute('x',rx+1.5); dr.setAttribute('y',ry+1.5); dr.setAttribute('width',Math.max(0,rw-3)); dr.setAttribute('height',Math.max(0,rh-3));
+      dr.setAttribute('fill','none'); dr.setAttribute('stroke','#dc3545'); dr.setAttribute('stroke-width','2'); dr.setAttribute('stroke-dasharray','4,2'); dr.setAttribute('rx','2');
       svg.appendChild(dr);
     }
-    const cc=clientColor(p.client);
-    const stripe=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    stripe.setAttribute('x',rx);stripe.setAttribute('y',ry);stripe.setAttribute('width',rw);stripe.setAttribute('height',Math.min(4,rh));
-    stripe.setAttribute('fill',cc);stripe.setAttribute('opacity','0.7');
-    svg.appendChild(stripe);
-    if(rw>30&&rh>18){
-      const short=p.caseId.replace('G143','').slice(0,6);
-      const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
-      txt.setAttribute('x',rx+rw/2);txt.setAttribute('y',ry+rh/2);
-      txt.setAttribute('text-anchor','middle');txt.setAttribute('dominant-baseline','middle');
-      txt.setAttribute('font-size',Math.min(9,rw/Math.max(short.length,1)*1.5));
-      txt.setAttribute('fill','#fff');txt.setAttribute('font-weight','700');txt.setAttribute('font-family','Arial');
-      txt.textContent=short;svg.appendChild(txt);
-      if(rh>26){
-        const dims=document.createElementNS('http://www.w3.org/2000/svg','text');
-        dims.setAttribute('x',rx+rw/2);dims.setAttribute('y',ry+rh/2+9);
-        dims.setAttribute('text-anchor','middle');dims.setAttribute('dominant-baseline','middle');
-        dims.setAttribute('font-size',7);dims.setAttribute('fill','rgba(255,255,255,.8)');dims.setAttribute('font-family','Arial');
-        dims.textContent=`${p.w}×${p.h}`;svg.appendChild(dims);
+    const cc = clientColor(p.client);
+    const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    stripe.setAttribute('x',rx); stripe.setAttribute('y',ry); stripe.setAttribute('width',rw); stripe.setAttribute('height',Math.min(4,rh));
+    stripe.setAttribute('fill',cc); stripe.setAttribute('opacity','0.7'); svg.appendChild(stripe);
+    if (rw > 30 && rh > 18) {
+      const short = p.caseId.replace('G143','').slice(0,6);
+      const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      txt.setAttribute('x',rx+rw/2); txt.setAttribute('y',ry+rh/2);
+      txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','middle');
+      txt.setAttribute('font-size', Math.min(9, rw/Math.max(short.length,1)*1.5));
+      txt.setAttribute('fill','#fff'); txt.setAttribute('font-weight','700'); txt.setAttribute('font-family','Arial');
+      txt.textContent = short; svg.appendChild(txt);
+      if (rh > 26) {
+        const dims = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        dims.setAttribute('x',rx+rw/2); dims.setAttribute('y',ry+rh/2+9);
+        dims.setAttribute('text-anchor','middle'); dims.setAttribute('dominant-baseline','middle');
+        dims.setAttribute('font-size','7'); dims.setAttribute('fill','rgba(255,255,255,.8)'); dims.setAttribute('font-family','Arial');
+        dims.textContent = `${p.w}×${p.h}`; svg.appendChild(dims);
       }
     }
-    if(p.rotated){
-      const m=document.createElementNS('http://www.w3.org/2000/svg','text');
-      m.setAttribute('x',rx+3);m.setAttribute('y',ry+11);m.setAttribute('font-size',8);m.setAttribute('fill','rgba(255,255,255,.7)');m.textContent='↻';svg.appendChild(m);
+    if (p.rotated) {
+      const m = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      m.setAttribute('x',rx+3); m.setAttribute('y',ry+11); m.setAttribute('font-size','8'); m.setAttribute('fill','rgba(255,255,255,.7)');
+      m.textContent = '↻'; svg.appendChild(m);
     }
   });
-  const dl=document.createElementNS('http://www.w3.org/2000/svg','text');
-  dl.setAttribute('x',SVGW/2);dl.setAttribute('y',SVGH-3);dl.setAttribute('text-anchor','middle');dl.setAttribute('font-size',9);dl.setAttribute('fill','#666');dl.textContent=`← ${cW} cm →`;
+  const dl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  dl.setAttribute('x',SVGW/2); dl.setAttribute('y',SVGH-3); dl.setAttribute('text-anchor','middle');
+  dl.setAttribute('font-size','9'); dl.setAttribute('fill','#666'); dl.textContent = `← ${ct.l} cm →`;
   svg.appendChild(dl);
   div.appendChild(svg);
-  const tbl=document.createElement('table');tbl.style.marginTop='10px';
-  tbl.innerHTML='<thead><tr><th>Case ID</th><th>Description</th><th>L×W (cm)</th><th>Weight (kg)</th><th>Client</th><th>DG</th><th>Position</th></tr></thead>';
-  const tbody=document.createElement('tbody');
-  packed.forEach(p=>{
-    const cc=clientColor(p.client);
-    const dgBadge=p.dg&&p.dg!=='none'?`<span class="tag tag-dg">Class ${p.dg}</span>`:'—';
-    const exclIcon=p.exclusive?` <span class="tag tag-excl" title="Exclusive">⚿</span>`:'';
-    const dims=`${p.origL}×${p.origW}${p.rotated?' <span class="tag tag-r">rotated</span>':''}`;
-    const tr2=document.createElement('tr');
-    tr2.innerHTML=`
+  const tbl = document.createElement('table'); tbl.style.marginTop = '10px';
+  tbl.innerHTML = '<thead><tr><th>Case ID</th><th>Description</th><th>L×W (cm)</th><th>H (cm)</th><th>Weight (kg)</th><th>Client</th><th>DG</th><th>UN #</th><th>Position</th></tr></thead>';
+  const tbody = document.createElement('tbody');
+  packed.forEach(p => {
+    const cc = clientColor(p.client);
+    const dgBadge = p.dg && p.dg !== 'none' ? `<span class="tag tag-dg">Class ${p.dg}</span>` : '—';
+    const exclIcon = p.exclusive ? ` <span class="tag tag-excl" title="Exclusive">⚿</span>` : '';
+    const dims = `${p.origL}×${p.origW}${p.rotated ? ' <span class="tag tag-r">rotated</span>' : ''}`;
+    const hCell = p.itemH
+      ? `${p.itemH}${p.itemH > ct.h ? ' <span style="color:#f44336;font-weight:700" title="Exceeds container height">⚠</span>' : ''}`
+      : '—';
+    const tr2 = document.createElement('tr');
+    tr2.innerHTML = `
       <td><span class="sw" style="background:${p.color}"></span> ${p.caseId}</td>
       <td>${p.desc}</td>
       <td>${dims}</td>
-      <td>${p.wt||'—'}</td>
+      <td>${hCell}</td>
+      <td>${p.wt || '—'}</td>
       <td><span class="tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}44">${p.client}</span>${exclIcon}</td>
       <td>${dgBadge}</td>
+      <td>${p.un ? `<span class="tag tag-n">${p.un}</span>` : '—'}</td>
       <td><span class="tag tag-n">x${p.x} y${p.y}</span></td>`;
     tbody.appendChild(tr2);
   });
-  tbl.appendChild(tbody);div.appendChild(tbl);
+  tbl.appendChild(tbody);
+  div.appendChild(tbl);
   return div;
 }
 
-function loadSample(){
-  if(document.querySelectorAll('#tBody tr').length>0)
-    if(!confirm('Replace current list with sample data?'))return;
-  document.getElementById('tBody').innerHTML='';
-  rowId=0;clientColorIdx=0;
-  Object.keys(clientColorMap).forEach(k=>delete clientColorMap[k]);
-  document.getElementById('consNo').value='ENU100044662';
+function loadSample() {
+  if (document.querySelectorAll('#tBody tr').length > 0)
+    if (!confirm('Replace current list with sample data?')) return;
+  document.getElementById('tBody').innerHTML = '';
+  rowId = 0; clientColorIdx = 0;
+  Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
+  document.getElementById('consNo').value = 'ENU100044662';
   [
-    {caseId:'G1431014',desc:'CARRIER',l:102,w:120,wt:310,client:'1'},
-    {caseId:'G1431015',desc:'CARRIER',l:102,w:120,wt:310,client:'1'},
-    {caseId:'G1431016',desc:'CARRIER',l:102,w:120,wt:310,client:'1'},
-    {caseId:'G1431017',desc:'CARRIER',l:102,w:120,wt:310,client:'1'},
-    {caseId:'G1431018',desc:'CARRIER',l:102,w:120,wt:310,client:'1'},
-    {caseId:'G1431019',desc:'CARRIER',l:102,w:120,wt:310,client:'1'},
-    {caseId:'G1431020',desc:'CASE TFR',l:120,w:120,wt:670,client:'1'},
-    {caseId:'G1431021',desc:'BRAKE SHOES',l:107,w:107,wt:230,client:'2'},
-    {caseId:'G1431022',desc:'BRAKE SHOES',l:107,w:107,wt:240,client:'2'},
-    {caseId:'G1431023',desc:'BRAKE SHOES',l:107,w:107,wt:230,client:'2'},
-    {caseId:'G1431024',desc:'BRAKE SHOES',l:107,w:107,wt:230,client:'2'},
-    {caseId:'G1431025',desc:'BRAKE SHOES',l:120,w:120,wt:250,client:'2'},
-    {caseId:'G1431026',desc:'BRAKE SHOES',l:107,w:107,wt:230,client:'2'},
-    {caseId:'G1431027',desc:'BRAKE SHOES',l:117,w:117,wt:230,client:'2'},
-    {caseId:'G1431028',desc:'BRAKE SHOES',l:117,w:117,wt:230,client:'2'},
-    {caseId:'G1431029',desc:'BRAKE SHOES',l:175,w:80,wt:665,client:'2'},
-    {caseId:'G1431030',desc:'TANK',l:176,w:80,wt:80,client:'3',dg:'3'},
-    {caseId:'G1431031',desc:'KIT',l:120,w:80,wt:240,client:'3'},
-    {caseId:'G1431032',desc:'KIT',l:120,w:80,wt:240,client:'3'},
-    {caseId:'G1431033',desc:'KIT',l:120,w:80,wt:240,client:'3'},
-    {caseId:'G1431034',desc:'KIT',l:120,w:80,wt:240,client:'3'},
-    {caseId:'G1431035',desc:'KIT',l:120,w:80,wt:240,client:'3'},
-    {caseId:'G1431036',desc:'FM050P',l:110,w:76,wt:150,client:'3'},
-    {caseId:'G1431037',desc:'HUB',l:113,w:113,wt:560,client:'3'},
-    {caseId:'G1431038',desc:'END ASSY',l:110,w:110,wt:360,client:'3'},
-    {caseId:'G1431039',desc:'AXLE',l:107,w:153,wt:1005,client:'3'},
-    {caseId:'G1431040',desc:'AXLE',l:107,w:153,wt:590,client:'3'},
-    {caseId:'G1431040B',desc:'AXLE',l:107,w:153,wt:590,client:'3'},
-    {caseId:'G1431041',desc:'CARRIER',l:94,w:62,wt:140,client:'1'},
-    {caseId:'G1431042',desc:'MISC',l:226,w:118,wt:693,client:'3',exclusive:true}
-  ].forEach(d=>addRow(d));
+    {caseId:'G1431014',desc:'CARRIER',    l:102,w:120,h:130,wt:310,client:'1'},
+    {caseId:'G1431015',desc:'CARRIER',    l:102,w:120,h:130,wt:310,client:'1'},
+    {caseId:'G1431016',desc:'CARRIER',    l:102,w:120,h:130,wt:310,client:'1'},
+    {caseId:'G1431017',desc:'CARRIER',    l:102,w:120,h:130,wt:310,client:'1'},
+    {caseId:'G1431018',desc:'CARRIER',    l:102,w:120,h:130,wt:310,client:'1'},
+    {caseId:'G1431019',desc:'CARRIER',    l:102,w:120,h:130,wt:310,client:'1'},
+    {caseId:'G1431020',desc:'CASE TFR',   l:120,w:120,h:150,wt:670,client:'1'},
+    {caseId:'G1431021',desc:'BRAKE SHOES',l:107,w:107,h:120,wt:230,client:'2'},
+    {caseId:'G1431022',desc:'BRAKE SHOES',l:107,w:107,h:120,wt:240,client:'2'},
+    {caseId:'G1431023',desc:'BRAKE SHOES',l:107,w:107,h:120,wt:230,client:'2'},
+    {caseId:'G1431024',desc:'BRAKE SHOES',l:107,w:107,h:120,wt:230,client:'2'},
+    {caseId:'G1431025',desc:'BRAKE SHOES',l:120,w:120,h:120,wt:250,client:'2'},
+    {caseId:'G1431026',desc:'BRAKE SHOES',l:107,w:107,h:120,wt:230,client:'2'},
+    {caseId:'G1431027',desc:'BRAKE SHOES',l:117,w:117,h:120,wt:230,client:'2'},
+    {caseId:'G1431028',desc:'BRAKE SHOES',l:117,w:117,h:120,wt:230,client:'2'},
+    {caseId:'G1431029',desc:'BRAKE SHOES',l:175,w: 80,h:100,wt:665,client:'2'},
+    {caseId:'G1431030',desc:'TANK',       l:176,w: 80,h:200,wt: 80,client:'3',dg:'3',un:'UN1203'},
+    {caseId:'G1431031',desc:'KIT',        l:120,w: 80,h: 90,wt:240,client:'3'},
+    {caseId:'G1431032',desc:'KIT',        l:120,w: 80,h: 90,wt:240,client:'3'},
+    {caseId:'G1431033',desc:'KIT',        l:120,w: 80,h: 90,wt:240,client:'3'},
+    {caseId:'G1431034',desc:'KIT',        l:120,w: 80,h: 90,wt:240,client:'3'},
+    {caseId:'G1431035',desc:'KIT',        l:120,w: 80,h: 90,wt:240,client:'3'},
+    {caseId:'G1431036',desc:'FM050P',     l:110,w: 76,h: 80,wt:150,client:'3'},
+    {caseId:'G1431037',desc:'HUB',        l:113,w:113,h:100,wt:560,client:'3'},
+    {caseId:'G1431038',desc:'END ASSY',   l:110,w:110,h:110,wt:360,client:'3'},
+    {caseId:'G1431039',desc:'AXLE',       l:107,w:153,h: 50,wt:1005,client:'3'},
+    {caseId:'G1431040',desc:'AXLE',       l:107,w:153,h: 50,wt:590,client:'3'},
+    {caseId:'G1431040B',desc:'AXLE',      l:107,w:153,h: 50,wt:590,client:'3'},
+    {caseId:'G1431041',desc:'CARRIER',    l: 94,w: 62,h:130,wt:140,client:'1'},
+    {caseId:'G1431042',desc:'MISC',       l:226,w:118,h:180,wt:693,client:'3',exclusive:true}
+  ].forEach(d => addRow(d));
 }
 </script>
 </body>
