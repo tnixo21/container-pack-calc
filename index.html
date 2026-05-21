@@ -76,7 +76,7 @@ details.dg-ref table th{background:#f5f5f5}
 <body>
 
 <div class="hdr">
-  <span style="font-size:1.5rem">📦</span>
+  <span style="font-size:1.5rem">&#x1F4E6;</span>
   <h1>Container Pack Calculator</h1>
   <span class="badge">WAREHOUSE TOOL</span>
 </div>
@@ -131,7 +131,7 @@ details.dg-ref table th{background:#f5f5f5}
   <hr class="divider">
   <div class="row" style="margin-bottom:0">
     <label>Gap / Clearance (cm)<input type="number" id="gap" value="5" min="0" max="30" style="width:90px"></label>
-    <label>Allow 90° Rotation
+    <label>Allow 90&#xB0; Rotation
       <select id="rotate">
         <option value="1">Yes (recommended)</option>
         <option value="0">No</option>
@@ -146,12 +146,12 @@ details.dg-ref table th{background:#f5f5f5}
   <div class="row no-print" style="flex-wrap:wrap;gap:8px">
     <label>Consignment #<input type="text" id="consNo" value="" style="width:180px" placeholder="ENU100044662"></label>
     <button class="btn btn-blue" onclick="addRow()">+ Add Row</button>
-    <button class="btn btn-blue" onclick="document.getElementById('csvIn').click()">⬆ Import CSV</button>
-    <button class="btn btn-purple" onclick="pasteFromClipboard()">📋 Paste from Excel</button>
-    <button class="btn btn-green" onclick="saveToStorage()">💾 Save</button>
-    <button class="btn btn-teal" onclick="loadFromStorage()">📂 Load Saved</button>
-    <button class="btn btn-red" onclick="loadSample()">↺ Load Sample</button>
-    <button class="btn btn-sm" style="background:#888;color:#fff" onclick="clearAll()">✕ Clear All</button>
+    <button class="btn btn-blue" onclick="document.getElementById('csvIn').click()">&#x2B06; Import CSV</button>
+    <button class="btn btn-purple" onclick="pasteFromClipboard()">&#x1F4CB; Paste from Excel</button>
+    <button class="btn btn-green" onclick="saveToStorage()">&#x1F4BE; Save</button>
+    <button class="btn btn-teal" onclick="loadFromStorage()">&#x1F4C2; Load Saved</button>
+    <button class="btn btn-red" onclick="loadSample()">&#x21BA; Load Sample</button>
+    <button class="btn btn-sm" style="background:#888;color:#fff" onclick="clearAll()">&#x2715; Clear All</button>
     <input type="file" id="csvIn" accept=".csv" style="display:none" onchange="handleCSV(event)">
   </div>
   <div style="font-size:.72rem;color:#999;margin-bottom:10px">
@@ -166,10 +166,10 @@ details.dg-ref table th{background:#f5f5f5}
         <th>Description</th>
         <th style="width:68px">L (cm)</th>
         <th style="width:68px">W (cm)</th>
-        <th style="width:68px" title="Item height — checked against container internal height">H (cm)</th>
+        <th style="width:68px" title="Item height -- checked against container internal height">H (cm)</th>
         <th style="width:72px">Wt (kg)</th>
         <th style="width:46px">Qty</th>
-        <th style="width:64px" title="Client ID — same IDs are packed together">Client</th>
+        <th style="width:64px" title="Client ID -- same IDs are packed together">Client</th>
         <th style="width:38px" title="Exclusive: cannot share container with other clients">Excl</th>
         <th style="width:128px" title="IMDG dangerous goods class">DG Class</th>
         <th style="width:80px" title="UN number for DG cargo (e.g. UN1203)">UN #</th>
@@ -180,13 +180,13 @@ details.dg-ref table th{background:#f5f5f5}
   </div>
 
   <details class="dg-ref no-print">
-    <summary>▸ DG Class Reference &amp; Segregation Guide</summary>
+    <summary>&#x25B8; DG Class Reference &amp; Segregation Guide</summary>
     <div style="overflow-x:auto;margin-top:6px">
     <table style="width:100%">
       <tr><th>Class</th><th>Description</th><th>Cannot share container with</th></tr>
       <tr><td>1</td><td>Explosives</td><td>2.1, 2.3, 3, 4.1, 4.2, 4.3, 5.1, 5.2, 6.1, 6.2, 7, 8, 9</td></tr>
       <tr><td>2.1</td><td>Flammable Gas</td><td>1, 3</td></tr>
-      <tr><td>2.2</td><td>Non-flammable Gas</td><td>—</td></tr>
+      <tr><td>2.2</td><td>Non-flammable Gas</td><td>&#x2014;</td></tr>
       <tr><td>2.3</td><td>Toxic Gas</td><td>1, 6.1</td></tr>
       <tr><td>3</td><td>Flammable Liquid</td><td>1, 2.1, 5.1, 5.2</td></tr>
       <tr><td>4.1</td><td>Flammable Solid</td><td>1, 5.1, 5.2</td></tr>
@@ -201,26 +201,26 @@ details.dg-ref table th{background:#f5f5f5}
       <tr><td>9</td><td>Misc DG</td><td>1</td></tr>
     </table>
     </div>
-    <p style="margin-top:6px;color:#888;font-size:.72rem">⚠ Simplified guide. Always verify against current IMDG Code and carrier requirements for specific UN numbers and packing groups.</p>
+    <p style="margin-top:6px;color:#888;font-size:.72rem">&#x26A0; Simplified guide. Always verify against current IMDG Code and carrier requirements for specific UN numbers and packing groups.</p>
   </details>
 </div>
 
 <!-- CALCULATE -->
 <div class="card no-print" style="text-align:center">
-  <button class="btn btn-blue btn-calc" onclick="calculate()">▶ Calculate Container Packing</button>
-  <button class="btn btn-green btn-calc" style="margin-left:12px" onclick="window.print()">🖨 Print Results</button>
-  <button class="btn btn-orange btn-calc" id="exportBtn" style="margin-left:12px" onclick="exportCSV()">⬇ Export CSV</button>
+  <button class="btn btn-blue btn-calc" onclick="calculate()">&#x25B6; Calculate Container Packing</button>
+  <button class="btn btn-green btn-calc" style="margin-left:12px" onclick="window.print()">&#x1F5A8; Print Results</button>
+  <button class="btn btn-orange btn-calc" id="exportBtn" style="margin-left:12px" onclick="exportCSV()">&#x2B07; Export CSV</button>
 </div>
 
 <!-- RESULTS -->
 <div id="results">
   <div class="stat-grid">
-    <div class="stat"><div class="n" id="sC">—</div><div class="l">Containers Needed</div></div>
-    <div class="stat"><div class="n" id="sS">—</div><div class="l">Total Skids</div></div>
-    <div class="stat"><div class="n" id="sW">—</div><div class="l">Total Weight (kg)</div></div>
-    <div class="stat"><div class="n" id="sU">—</div><div class="l">Avg Floor Util %</div></div>
-    <div class="stat"><div class="n" id="sA">—</div><div class="l">Container Floor (m²)</div></div>
-    <div class="stat"><div class="n" id="sFCL" style="font-size:1rem;padding-top:6px">—</div><div class="l">FCL / LCL</div></div>
+    <div class="stat"><div class="n" id="sC">&#x2014;</div><div class="l">Containers Needed</div></div>
+    <div class="stat"><div class="n" id="sS">&#x2014;</div><div class="l">Total Skids</div></div>
+    <div class="stat"><div class="n" id="sTW">&#x2014;</div><div class="l">Total Weight (kg)</div></div>
+    <div class="stat"><div class="n" id="sU">&#x2014;</div><div class="l">Avg Floor Util %</div></div>
+    <div class="stat"><div class="n" id="sA">&#x2014;</div><div class="l">Container Floor (m&#xB2;)</div></div>
+    <div class="stat"><div class="n" id="sFCL" style="font-size:1rem;padding-top:6px">&#x2014;</div><div class="l">FCL / LCL</div></div>
   </div>
   <div id="fclBanner" style="margin-bottom:16px"></div>
   <div id="ctnResults" class="ctn-grid"></div>
@@ -230,6 +230,7 @@ details.dg-ref table th{background:#f5f5f5}
 </div><!-- /main -->
 
 <script>
+// -- Colour palettes
 const ITEM_COLORS = [
   '#4E79A7','#F28E2B','#E15759','#76B7B2','#59A14F',
   '#EDC948','#B07AA1','#FF9DA7','#9C755F','#BAB0AC',
@@ -245,6 +246,7 @@ function clientColor(c) {
   return clientColorMap[c];
 }
 
+// -- Container presets [floorL, floorW, intH, maxPayloadKg]
 const PRESETS = {
   '20std': [590,  235, 239, 21700],
   '40std': [1204, 235, 239, 26680],
@@ -289,6 +291,7 @@ function getContainerTypes() {
   return types;
 }
 
+// -- DG segregation
 const DG_INCOMPAT = {
   '1':   ['2.1','2.3','3','4.1','4.2','4.3','5.1','5.2','6.1','6.2','7','8','9'],
   '2.1': ['1','3'], '2.2': [], '2.3': ['1','6.1'],
@@ -302,6 +305,7 @@ function dgConflict(a, b) {
   return (DG_INCOMPAT[a] || []).includes(b) || (DG_INCOMPAT[b] || []).includes(a);
 }
 
+// -- MaxRects 2D bin packing
 class MaxRects {
   constructor(w, h) { this.bW = w; this.bH = h; this.free = [{x:0,y:0,w,h}]; this.packed = []; }
   insert(item, gap, allowRot) {
@@ -319,10 +323,10 @@ class MaxRects {
     const nf = [], pw = pl.w+g, ph = pl.h+g;
     for (const r of this.free) {
       if (!this._ov(r, {x:pl.x,y:pl.y,w:pw,h:ph})) { nf.push(r); continue; }
-      if (pl.x > r.x)       nf.push({x:r.x,      y:r.y, w:pl.x-r.x,         h:r.h});
-      if (pl.x+pw < r.x+r.w) nf.push({x:pl.x+pw,  y:r.y, w:r.x+r.w-pl.x-pw, h:r.h});
-      if (pl.y > r.y)       nf.push({x:r.x, y:r.y,      w:r.w, h:pl.y-r.y});
-      if (pl.y+ph < r.y+r.h) nf.push({x:r.x, y:pl.y+ph, w:r.w, h:r.y+r.h-pl.y-ph});
+      if (pl.x > r.x)        nf.push({x:r.x,     y:r.y, w:pl.x-r.x,        h:r.h});
+      if (pl.x+pw < r.x+r.w) nf.push({x:pl.x+pw, y:r.y, w:r.x+r.w-pl.x-pw, h:r.h});
+      if (pl.y > r.y)        nf.push({x:r.x, y:r.y,      w:r.w, h:pl.y-r.y});
+      if (pl.y+ph < r.y+r.h) nf.push({x:r.x, y:pl.y+ph,  w:r.w, h:r.y+r.h-pl.y-ph});
     }
     this.free = nf;
   }
@@ -341,6 +345,7 @@ class MaxRects {
   util() { return this.packed.reduce((s, p) => s + p.w*p.h, 0) / (this.bW * this.bH) * 100; }
 }
 
+// -- Placement constraint check (client exclusivity + DG + weight limit)
 function canPlace(bin, item) {
   if (bin.lockedClient !== null && bin.lockedClient !== item.client) return false;
   if (item.exclusive && bin.clients.size > 0 && ![...bin.clients].every(c => c === item.client)) return false;
@@ -350,6 +355,7 @@ function canPlace(bin, item) {
   return true;
 }
 
+// -- Advanced packing: client grouping + exclusivity + DG + weight + fleet
 function packAdvanced(items, containerTypes, gap, rot) {
   const groups = {};
   items.forEach(it => { (groups[it.client] = groups[it.client] || []).push(it); });
@@ -360,8 +366,10 @@ function packAdvanced(items, containerTypes, gap, rot) {
   });
   const sorted = [];
   clientOrder.forEach(c => sorted.push(...[...groups[c]].sort((a,b) => b.w*b.h - a.w*a.h)));
+
   const binState = [];
   const oversized = [];
+
   for (const item of sorted) {
     let placed = false;
     const tryOrder = [...binState].sort((a, b) =>
@@ -395,6 +403,7 @@ function packAdvanced(items, containerTypes, gap, rot) {
   return { bins: binState.map(b => b.mr), binMeta: binState, oversized };
 }
 
+// -- FCL / LCL recommendation
 function getFCLLCL(binMeta, items, containerTypes) {
   const ct = containerTypes[0];
   const used = items.reduce((s, i) => s + i.w*i.h, 0);
@@ -402,88 +411,95 @@ function getFCLLCL(binMeta, items, containerTypes) {
   const hasDG = items.some(i => i.dg && i.dg !== 'none');
   const hasExcl = items.some(i => i.exclusive);
   if (binMeta.length > 1)
-    return { rec: 'FCL', cls: 'tag-fcl', detail: `Requires ${binMeta.length} full containers — book as FCL.` };
+    return { rec: 'FCL', cls: 'tag-fcl', detail: 'Requires ' + binMeta.length + ' full containers -- book as FCL.' };
   if (hasDG)
-    return { rec: 'FCL', cls: 'tag-fcl', detail: 'Contains Dangerous Goods — FCL required. Verify carrier DG acceptance, placarding and documentation.' };
+    return { rec: 'FCL', cls: 'tag-fcl', detail: 'Contains Dangerous Goods -- FCL required. Verify carrier DG acceptance, placarding and documentation.' };
   if (hasExcl)
-    return { rec: 'FCL', cls: 'tag-fcl', detail: 'Exclusive client segregation in effect — dedicated FCL container required.' };
+    return { rec: 'FCL', cls: 'tag-fcl', detail: 'Exclusive client segregation in effect -- dedicated FCL container required.' };
   if (+pct >= 70)
-    return { rec: 'FCL', cls: 'tag-fcl', detail: `High floor utilisation (${pct}%) — FCL is cost-effective and gives full container control.` };
+    return { rec: 'FCL', cls: 'tag-fcl', detail: 'High floor utilisation (' + pct + '%) -- FCL is cost-effective and gives full container control.' };
   if (+pct < 35)
-    return { rec: 'LCL', cls: 'tag-lcl', detail: `Low floor utilisation (${pct}% of one container) — LCL consolidation will likely be cheaper. Confirm with your freight forwarder.` };
-  return { rec: 'FCL or LCL', cls: 'tag-either', detail: `Moderate floor utilisation (${pct}%) — compare FCL vs LCL rates with your freight forwarder.` };
+    return { rec: 'LCL', cls: 'tag-lcl', detail: 'Low floor utilisation (' + pct + '% of one container) -- LCL consolidation will likely be cheaper. Confirm with your freight forwarder.' };
+  return { rec: 'FCL or LCL', cls: 'tag-either', detail: 'Moderate floor utilisation (' + pct + '%) -- compare FCL vs LCL rates with your freight forwarder.' };
 }
 
+// -- DG select HTML
 const DG_OPTS = [
-  ['none','— None —'],['1','Class 1 – Explosives'],['2.1','Class 2.1 – Flammable Gas'],
-  ['2.2','Class 2.2 – Non-flammable Gas'],['2.3','Class 2.3 – Toxic Gas'],
-  ['3','Class 3 – Flammable Liquid'],['4.1','Class 4.1 – Flammable Solid'],
-  ['4.2','Class 4.2 – Spont. Combustible'],['4.3','Class 4.3 – Water Reactive'],
-  ['5.1','Class 5.1 – Oxidizer'],['5.2','Class 5.2 – Organic Peroxide'],
-  ['6.1','Class 6.1 – Toxic'],['6.2','Class 6.2 – Infectious'],
-  ['7','Class 7 – Radioactive'],['8','Class 8 – Corrosive'],['9','Class 9 – Misc DG']
+  ['none','-- None --'],['1','Class 1 - Explosives'],['2.1','Class 2.1 - Flammable Gas'],
+  ['2.2','Class 2.2 - Non-flammable Gas'],['2.3','Class 2.3 - Toxic Gas'],
+  ['3','Class 3 - Flammable Liquid'],['4.1','Class 4.1 - Flammable Solid'],
+  ['4.2','Class 4.2 - Spont. Combustible'],['4.3','Class 4.3 - Water Reactive'],
+  ['5.1','Class 5.1 - Oxidizer'],['5.2','Class 5.2 - Organic Peroxide'],
+  ['6.1','Class 6.1 - Toxic'],['6.2','Class 6.2 - Infectious'],
+  ['7','Class 7 - Radioactive'],['8','Class 8 - Corrosive'],['9','Class 9 - Misc DG']
 ];
-function dgSel(val = 'none') {
-  return '<select>' + DG_OPTS.map(([v,t]) => `<option value="${v}"${v===val?' selected':''}>${t}</option>`).join('') + '</select>';
+function dgSel(val) {
+  val = val || 'none';
+  return '<select>' + DG_OPTS.map(function(opt) {
+    return '<option value="' + opt[0] + '"' + (opt[0] === val ? ' selected' : '') + '>' + opt[1] + '</option>';
+  }).join('') + '</select>';
 }
 
+// -- Table management
 let rowId = 0;
-function addRow(d = {}) {
+function addRow(d) {
+  d = d || {};
   const tb = document.getElementById('tBody');
   const n = tb.rows.length + 1;
-  const tr = tb.insertRow();
-  tr.dataset.id = rowId++;
-  tr.innerHTML = `
-    <td style="color:#999;text-align:center">${n}</td>
-    <td><input type="text" value="${esc(d.caseId||'')}" placeholder="G1431014"></td>
-    <td><input type="text" value="${esc(d.desc||'')}" placeholder="CARRIER"></td>
-    <td><input type="number" value="${d.l||\'\'}" min="1" placeholder="120" style="width:58px"></td>
-    <td><input type="number" value="${d.w||\'\'}" min="1" placeholder="100" style="width:58px"></td>
-    <td><input type="number" value="${d.h||\'\'}" min="1" placeholder="120" style="width:58px" title="Item height (cm)"></td>
-    <td><input type="number" value="${d.wt||\'\'}" min="0" placeholder="300" style="width:64px"></td>
-    <td><input type="number" value="${d.qty||1}" min="1" max="99" style="width:42px"></td>
-    <td><input type="text" value="${esc(d.client||'1')}" placeholder="1" style="width:46px"></td>
-    <td style="text-align:center"><input type="checkbox"${d.exclusive?' checked':''} title="Exclusive"></td>
-    <td>${dgSel(d.dg||'none')}</td>
-    <td><input type="text" value="${esc(d.un||'')}" placeholder="UN1234" style="width:70px"></td>
-    <td class="no-print" style="text-align:center">
-      <button class="btn btn-sm" style="background:#dc3545;color:#fff" onclick="delRow(this)">✕</button>
-    </td>`;
+  const rid = rowId++;
+  // inputs: [0]caseId [1]desc [2]l [3]w [4]h [5]wt [6]qty [7]client [8]excl(checkbox) [9]un
+  tb.insertAdjacentHTML('beforeend',
+    '<tr data-id="' + rid + '">' +
+    '<td style="color:#999;text-align:center">' + n + '</td>' +
+    '<td><input type="text" value="' + esc(d.caseId || '') + '" placeholder="G1431014"></td>' +
+    '<td><input type="text" value="' + esc(d.desc || '') + '" placeholder="CARRIER"></td>' +
+    '<td><input type="number" value="' + (d.l || '') + '" min="1" placeholder="120" style="width:58px"></td>' +
+    '<td><input type="number" value="' + (d.w || '') + '" min="1" placeholder="100" style="width:58px"></td>' +
+    '<td><input type="number" value="' + (d.h || '') + '" min="1" placeholder="120" style="width:58px" title="Item height (cm)"></td>' +
+    '<td><input type="number" value="' + (d.wt || '') + '" min="0" placeholder="300" style="width:64px"></td>' +
+    '<td><input type="number" value="' + (d.qty || 1) + '" min="1" max="99" style="width:42px"></td>' +
+    '<td><input type="text" value="' + esc(d.client || '1') + '" placeholder="1" style="width:46px" title="Client / consignee ID"></td>' +
+    '<td style="text-align:center"><input type="checkbox"' + (d.exclusive ? ' checked' : '') + ' title="Exclusive"></td>' +
+    '<td>' + dgSel(d.dg || 'none') + '</td>' +
+    '<td><input type="text" value="' + esc(d.un || '') + '" placeholder="UN1234" style="width:70px" title="UN number for DG cargo"></td>' +
+    '<td class="no-print" style="text-align:center"><button class="btn btn-sm" style="background:#dc3545;color:#fff" onclick="delRow(this)">&#x2715;</button></td>' +
+    '</tr>'
+  );
 }
-function esc(s) { return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 function delRow(btn) { btn.closest('tr').remove(); renum(); }
-function renum() { document.querySelectorAll('#tBody tr').forEach((r,i) => r.cells[0].textContent = i+1); }
+function renum() { document.querySelectorAll('#tBody tr').forEach(function(r,i){ r.cells[0].textContent = i+1; }); }
 function clearAll() {
   if (confirm('Clear all rows?')) {
     document.getElementById('tBody').innerHTML = '';
     rowId = 0; clientColorIdx = 0;
-    Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
+    Object.keys(clientColorMap).forEach(function(k){ delete clientColorMap[k]; });
   }
 }
 
 function getItems() {
-  const items = [];
-  document.querySelectorAll('#tBody tr').forEach((tr, idx) => {
-    const inp = [...tr.querySelectorAll('input')];
-    const sel = tr.querySelector('select');
-    const caseId = inp[0].value.trim() || `ITEM-${idx+1}`;
-    const desc   = inp[1].value.trim() || '—';
-    const l      = parseFloat(inp[2].value) || 0;
-    const wDim   = parseFloat(inp[3].value) || 0;
-    const itemH  = parseFloat(inp[4].value) || 0;
-    const wt     = parseFloat(inp[5].value) || 0;
-    const qty    = Math.max(1, parseInt(inp[6].value) || 1);
-    const client = (inp[7].value.trim() || '1').toUpperCase();
-    const exclusive = inp[8].checked;
-    const dg = sel ? sel.value : 'none';
-    const un = inp[9].value.trim();
+  var items = [];
+  document.querySelectorAll('#tBody tr').forEach(function(tr, idx) {
+    var inp = Array.from(tr.querySelectorAll('input'));
+    var sel = tr.querySelector('select');
+    var caseId = inp[0].value.trim() || ('ITEM-' + (idx+1));
+    var desc   = inp[1].value.trim() || '-';
+    var l      = parseFloat(inp[2].value) || 0;
+    var wDim   = parseFloat(inp[3].value) || 0;
+    var itemH  = parseFloat(inp[4].value) || 0;
+    var wt     = parseFloat(inp[5].value) || 0;
+    var qty    = Math.max(1, parseInt(inp[6].value) || 1);
+    var client = (inp[7].value.trim() || '1').toUpperCase();
+    var exclusive = inp[8].checked;
+    var dg = sel ? sel.value : 'none';
+    var un = inp[9].value.trim();
     if (l > 0 && wDim > 0) {
-      for (let q = 0; q < qty; q++) {
+      for (var q = 0; q < qty; q++) {
         items.push({
           uid: items.length,
-          caseId: qty > 1 ? `${caseId}[${q+1}]` : caseId,
-          desc, origL: l, origW: wDim, itemH,
-          w: l, h: wDim, wt, client, exclusive, dg, un
+          caseId: qty > 1 ? caseId + '[' + (q+1) + ']' : caseId,
+          desc: desc, origL: l, origW: wDim, itemH: itemH,
+          w: l, h: wDim, wt: wt, client: client, exclusive: exclusive, dg: dg, un: un
         });
       }
     }
@@ -491,12 +507,13 @@ function getItems() {
   return items;
 }
 
-const STORAGE_KEY = 'cpc_saved_list';
+// -- Save / Load (localStorage)
+var STORAGE_KEY = 'cpc_saved_list';
 function saveToStorage() {
-  const data = [];
-  document.querySelectorAll('#tBody tr').forEach(tr => {
-    const inp = [...tr.querySelectorAll('input')];
-    const sel = tr.querySelector('select');
+  var data = [];
+  document.querySelectorAll('#tBody tr').forEach(function(tr) {
+    var inp = Array.from(tr.querySelectorAll('input'));
+    var sel = tr.querySelector('select');
     data.push({
       caseId: inp[0].value, desc: inp[1].value,
       l: inp[2].value, w: inp[3].value, h: inp[4].value,
@@ -504,49 +521,51 @@ function saveToStorage() {
       exclusive: inp[8].checked, dg: sel ? sel.value : 'none', un: inp[9].value
     });
   });
-  const save = { consNo: document.getElementById('consNo').value, rows: data, ts: new Date().toISOString() };
+  var save = { consNo: document.getElementById('consNo').value, rows: data, ts: new Date().toISOString() };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(save));
-  alert(`Saved ${data.length} rows at ${new Date().toLocaleTimeString()}.`);
+  alert('Saved ' + data.length + ' rows at ' + new Date().toLocaleTimeString() + '.');
 }
 function loadFromStorage() {
-  const raw = localStorage.getItem(STORAGE_KEY);
+  var raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) { alert('No saved list found.'); return; }
-  const save = JSON.parse(raw);
-  if (!confirm(`Load saved list (${save.rows.length} rows, saved ${new Date(save.ts).toLocaleString()})?\nThis will replace the current list.`)) return;
+  var save = JSON.parse(raw);
+  if (!confirm('Load saved list (' + save.rows.length + ' rows, saved ' + new Date(save.ts).toLocaleString() + ')?\nThis will replace the current list.')) return;
   document.getElementById('tBody').innerHTML = '';
   rowId = 0; clientColorIdx = 0;
-  Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
+  Object.keys(clientColorMap).forEach(function(k){ delete clientColorMap[k]; });
   document.getElementById('consNo').value = save.consNo || '';
-  save.rows.forEach(r => addRow(r));
+  save.rows.forEach(function(r){ addRow(r); });
 }
 
+// -- Paste from Excel / clipboard
 async function pasteFromClipboard() {
   try {
-    const text = await navigator.clipboard.readText();
+    var text = await navigator.clipboard.readText();
     if (!text.trim()) { alert('Clipboard is empty.'); return; }
-    const lines = text.split(/\r?\n/).filter(l => l.trim());
-    let added = 0;
-    lines.forEach(line => {
-      const c = line.split('\t').map(x => x.trim());
+    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
+    var added = 0;
+    lines.forEach(function(line) {
+      var c = line.split('\t').map(function(x){ return x.trim(); });
       if (c.length < 3) return;
       addRow({ caseId:c[0], desc:c[1], l:c[2], w:c[3]||'', h:c[4]||'', wt:c[5]||'', qty:c[6]||1,
                client:c[7]||'1', exclusive:c[8]==='1', dg:c[9]||'none', un:c[10]||'' });
       added++;
     });
-    alert(`Pasted ${added} row(s) from clipboard.`);
+    alert('Pasted ' + added + ' row(s) from clipboard.');
   } catch(e) {
     alert('Could not read clipboard.\nPlease use Import CSV instead, or grant clipboard permission when prompted.');
   }
 }
 
+// -- CSV import
 function handleCSV(e) {
-  const f = e.target.files[0]; if (!f) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const lines = ev.target.result.split(/\r?\n/).filter(l => l.trim());
-    const start = isNaN(lines[0].split(',')[0]) ? 1 : 0;
-    lines.slice(start).forEach(line => {
-      const c = line.split(',').map(x => x.trim());
+  var f = e.target.files[0]; if (!f) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var lines = ev.target.result.split(/\r?\n/).filter(function(l){ return l.trim(); });
+    var start = isNaN(lines[0].split(',')[0]) ? 1 : 0;
+    lines.slice(start).forEach(function(line) {
+      var c = line.split(',').map(function(x){ return x.trim(); });
       addRow({ caseId:c[0], desc:c[1], l:c[2], w:c[3], h:c[4]||'', wt:c[5]||'', qty:c[6]||1,
                client:c[7]||'1', exclusive:c[8]==='1', dg:c[9]||'none', un:c[10]||'' });
     });
@@ -554,17 +573,17 @@ function handleCSV(e) {
   reader.readAsText(f); e.target.value = '';
 }
 
-let _lastResult = null;
+// -- Export packing plan to CSV
+var _lastResult = null;
 function exportCSV() {
   if (!_lastResult) return;
-  const { bins, binMeta } = _lastResult;
-  const rows = [['Container','Type','Floor L (cm)','Floor W (cm)','Int H (cm)','Max Payload (kg)',
-                  'Cargo Wt (kg)','Floor Util %','Case ID','Description',
-                  'L (cm)','W (cm)','H (cm)','Weight (kg)','Client','Exclusive','DG Class','UN #','Rotated','Pos X','Pos Y']];
-  binMeta.forEach((meta, i) => {
-    const bin = bins[i];
-    const ct = meta.ctnType;
-    bin.packed.forEach(p => {
+  var bins = _lastResult.bins, binMeta = _lastResult.binMeta;
+  var rows = [['Container','Type','Floor L (cm)','Floor W (cm)','Int H (cm)','Max Payload (kg)',
+                'Cargo Wt (kg)','Floor Util %','Case ID','Description',
+                'L (cm)','W (cm)','H (cm)','Weight (kg)','Client','Exclusive','DG Class','UN #','Rotated','Pos X','Pos Y']];
+  binMeta.forEach(function(meta, i) {
+    var bin = bins[i], ct = meta.ctnType;
+    bin.packed.forEach(function(p) {
       rows.push([
         i+1, ct.label, ct.l, ct.w, ct.h,
         ct.maxWt === Infinity ? '' : ct.maxWt,
@@ -576,199 +595,201 @@ function exportCSV() {
       ]);
     });
   });
-  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a = document.createElement('a');
+  var csv = rows.map(function(r){ return r.map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
+  var a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
-  a.download = `${document.getElementById('consNo').value || 'packing'}_plan.csv`;
+  a.download = (document.getElementById('consNo').value || 'packing') + '_plan.csv';
   a.click();
 }
 
+// -- Calculate
 function calculate() {
   clientColorIdx = 0;
-  Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
-  const items = getItems();
+  Object.keys(clientColorMap).forEach(function(k){ delete clientColorMap[k]; });
+  var items = getItems();
   if (!items.length) { alert('Add at least one item with valid dimensions.'); return; }
-  const containerTypes = getContainerTypes();
-  const gap = parseFloat(document.getElementById('gap').value) || 0;
-  const rot = document.getElementById('rotate').value === '1';
-  const descs = [...new Set(items.map(i => i.desc))];
-  const colorMap = {}; descs.forEach((d,i) => colorMap[d] = ITEM_COLORS[i % ITEM_COLORS.length]);
-  items.forEach(it => it.color = colorMap[it.desc]);
-  const { bins, binMeta, oversized } = packAdvanced(items, containerTypes, gap, rot);
-  _lastResult = { bins, binMeta, oversized, containerTypes };
-  const totalWt = items.reduce((s, i) => s + i.wt, 0);
-  const avgUtil = bins.length ? bins.reduce((s,b) => s + b.util(), 0) / bins.length : 0;
-  const fcl = getFCLLCL(binMeta, items, containerTypes);
-  const ct0 = containerTypes[0];
+  var containerTypes = getContainerTypes();
+  var gap = parseFloat(document.getElementById('gap').value) || 0;
+  var rot = document.getElementById('rotate').value === '1';
+  var descs = items.map(function(i){ return i.desc; }).filter(function(v,i,a){ return a.indexOf(v)===i; });
+  var colorMap = {};
+  descs.forEach(function(d,i){ colorMap[d] = ITEM_COLORS[i % ITEM_COLORS.length]; });
+  items.forEach(function(it){ it.color = colorMap[it.desc]; });
+  var result = packAdvanced(items, containerTypes, gap, rot);
+  var bins = result.bins, binMeta = result.binMeta, oversized = result.oversized;
+  _lastResult = { bins: bins, binMeta: binMeta, oversized: oversized, containerTypes: containerTypes };
+  var totalWt = items.reduce(function(s,i){ return s + i.wt; }, 0);
+  var avgUtil = bins.length ? bins.reduce(function(s,b){ return s + b.util(); }, 0) / bins.length : 0;
+  var fcl = getFCLLCL(binMeta, items, containerTypes);
+  var ct0 = containerTypes[0];
   document.getElementById('sC').textContent = bins.length;
   document.getElementById('sS').textContent = items.length;
-  document.getElementById('sW').textContent = totalWt.toLocaleString();
+  document.getElementById('sTW').textContent = totalWt.toLocaleString();
   document.getElementById('sU').textContent = avgUtil.toFixed(1) + '%';
   document.getElementById('sA').textContent = ((ct0.l * ct0.w) / 10000).toFixed(2);
-  document.getElementById('sFCL').innerHTML = `<span class="tag ${fcl.cls}" style="font-size:.95rem;padding:4px 10px">${fcl.rec}</span>`;
-  document.getElementById('fclBanner').innerHTML =
-    `<div class="${fcl.rec==='LCL'?'warn':'info'}"><strong>Shipment Mode: ${fcl.rec}</strong> — ${fcl.detail}</div>`;
-  const cr = document.getElementById('ctnResults'); cr.innerHTML = '';
-  binMeta.forEach((meta, i) => cr.appendChild(renderContainer(bins[i], meta, i+1)));
-  const od = document.getElementById('oversized'); od.innerHTML = '';
-  const msgs = [];
+  document.getElementById('sFCL').innerHTML = '<span class="tag ' + fcl.cls + '" style="font-size:.95rem;padding:4px 10px">' + fcl.rec + '</span>';
+  document.getElementById('fclBanner').innerHTML = '<div class="' + (fcl.rec === 'LCL' ? 'warn' : 'info') + '"><strong>Shipment Mode: ' + fcl.rec + '</strong> -- ' + fcl.detail + '</div>';
+  var cr = document.getElementById('ctnResults'); cr.innerHTML = '';
+  binMeta.forEach(function(meta, i){ cr.appendChild(renderContainer(bins[i], meta, i+1)); });
+  var od = document.getElementById('oversized'); od.innerHTML = '';
+  var msgs = [];
   if (oversized.length)
-    msgs.push(`<div class="err">⚠ <strong>${oversized.length} item(s) could not be placed</strong> (too large for any container floor even when rotated): ${oversized.map(i=>`<strong>${i.caseId}</strong> (${i.origL}×${i.origW} cm)`).join(', ')}</div>`);
-  const maxContainerH = Math.max(...containerTypes.map(ct => ct.h));
-  const heightBad = items.filter(i => i.itemH > 0 && i.itemH > maxContainerH);
+    msgs.push('<div class="err">&#x26A0; <strong>' + oversized.length + ' item(s) could not be placed</strong> (too large for any container floor even when rotated): ' + oversized.map(function(i){ return '<strong>' + i.caseId + '</strong> (' + i.origL + 'x' + i.origW + ' cm)'; }).join(', ') + '</div>');
+  var maxContainerH = Math.max.apply(null, containerTypes.map(function(ct){ return ct.h; }));
+  var heightBad = items.filter(function(i){ return i.itemH > 0 && i.itemH > maxContainerH; });
   if (heightBad.length)
-    msgs.push(`<div class="err">⚠ <strong>${heightBad.length} item(s) exceed all container heights</strong> (max ${maxContainerH} cm): ${heightBad.map(i=>`<strong>${i.caseId}</strong> (H=${i.itemH} cm)`).join(', ')} — verify clearance with carrier.</div>`);
+    msgs.push('<div class="err">&#x26A0; <strong>' + heightBad.length + ' item(s) exceed all container heights</strong> (max ' + maxContainerH + ' cm): ' + heightBad.map(function(i){ return '<strong>' + i.caseId + '</strong> (H=' + i.itemH + ' cm)'; }).join(', ') + ' -- verify clearance with carrier.</div>');
   od.innerHTML = msgs.join('');
   document.getElementById('results').style.display = 'block';
   document.getElementById('exportBtn').style.display = 'inline-block';
   document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 }
 
+// -- Render one container card
 function renderContainer(bin, meta, num) {
-  const div = document.createElement('div');
+  var div = document.createElement('div');
   div.className = 'ctn-card';
-  const packed = bin.packed;
-  const util = bin.util();
-  const ct = meta.ctnType;
-  const totalWt = meta.currentWt;
-  const weightPct = ct.maxWt < Infinity ? (totalWt / ct.maxWt * 100).toFixed(0) : null;
-  const weightOver = ct.maxWt < Infinity && totalWt > ct.maxWt;
-  const clients = [...meta.clients].sort();
-  const dgClasses = [...meta.dgClasses].sort();
-  const hasDG = dgClasses.length > 0;
-  const dgConflicts = [];
+  var packed = bin.packed;
+  var util = bin.util();
+  var ct = meta.ctnType;
+  var totalWt = meta.currentWt;
+  var weightPct = ct.maxWt < Infinity ? (totalWt / ct.maxWt * 100).toFixed(0) : null;
+  var weightOver = ct.maxWt < Infinity && totalWt > ct.maxWt;
+  var clients = Array.from(meta.clients).sort();
+  var dgClasses = Array.from(meta.dgClasses).sort();
+  var hasDG = dgClasses.length > 0;
+  var dgConflicts = [];
   if (hasDG) {
-    const arr = [...meta.dgClasses];
-    for (let i = 0; i < arr.length; i++)
-      for (let j = i+1; j < arr.length; j++)
-        if (dgConflict(arr[i], arr[j])) dgConflicts.push(`Class ${arr[i]} + Class ${arr[j]}`);
+    var arr = Array.from(meta.dgClasses);
+    for (var i = 0; i < arr.length; i++)
+      for (var j = i+1; j < arr.length; j++)
+        if (dgConflict(arr[i], arr[j])) dgConflicts.push('Class ' + arr[i] + ' + Class ' + arr[j]);
   }
   if (weightOver) div.classList.add('weight-over');
   if (dgConflicts.length) div.classList.add('dg-conflict');
   else if (hasDG) div.classList.add('has-dg');
-  const clientBadges = clients.map(c => {
-    const cc = clientColor(c);
-    return `<span class="tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}55">Client ${c}</span>`;
+  var clientBadges = clients.map(function(c) {
+    var cc = clientColor(c);
+    return '<span class="tag" style="background:' + cc + '22;color:' + cc + ';border:1px solid ' + cc + '55">Client ' + c + '</span>';
   }).join('');
-  const dgBadges = dgClasses.map(d => `<span class="tag tag-dg">DG ${d}</span>`).join('');
-  const exclBadge = meta.lockedClient ? `<span class="tag tag-excl">Exclusive — Client ${meta.lockedClient}</span>` : '';
-  const wtStr = ct.maxWt < Infinity
-    ? `${totalWt.toLocaleString()} / ${ct.maxWt.toLocaleString()} kg (${weightPct}%)`
-    : `${totalWt.toLocaleString()} kg`;
-  div.innerHTML = `
-    <h3><span class="ctn-type-chip ${ct.chipClass}">${ct.label}</span>Container ${num}</h3>
-    <div class="ctn-meta">${packed.length} skids &nbsp;|&nbsp; Floor: <strong>${util.toFixed(1)}%</strong> &nbsp;|&nbsp; Weight: <strong>${wtStr}</strong> &nbsp;|&nbsp; ${ct.l}×${ct.w} cm, H ${ct.h} cm</div>
-    <div style="margin-bottom:8px;line-height:1.8">${clientBadges}${exclBadge}${dgBadges}</div>`;
+  var dgBadges = dgClasses.map(function(d){ return '<span class="tag tag-dg">DG ' + d + '</span>'; }).join('');
+  var exclBadge = meta.lockedClient ? '<span class="tag tag-excl">Exclusive -- Client ' + meta.lockedClient + '</span>' : '';
+  var wtStr = ct.maxWt < Infinity
+    ? totalWt.toLocaleString() + ' / ' + ct.maxWt.toLocaleString() + ' kg (' + weightPct + '%)'
+    : totalWt.toLocaleString() + ' kg';
+  div.innerHTML =
+    '<h3><span class="ctn-type-chip ' + ct.chipClass + '">' + ct.label + '</span>Container ' + num + '</h3>' +
+    '<div class="ctn-meta">' + packed.length + ' skids &nbsp;|&nbsp; Floor: <strong>' + util.toFixed(1) + '%</strong> &nbsp;|&nbsp; Weight: <strong>' + wtStr + '</strong> &nbsp;|&nbsp; ' + ct.l + 'x' + ct.w + ' cm, H ' + ct.h + ' cm</div>' +
+    '<div style="margin-bottom:8px;line-height:1.8">' + clientBadges + exclBadge + dgBadges + '</div>';
   if (weightOver) {
-    const w = document.createElement('div'); w.className = 'err';
-    w.innerHTML = `⚠ <strong>Weight Limit Exceeded</strong> — ${totalWt.toLocaleString()} kg loaded, max payload is ${ct.maxWt.toLocaleString()} kg. Split this cargo or upgrade to a higher-capacity container.`;
+    var w = document.createElement('div'); w.className = 'err';
+    w.innerHTML = '&#x26A0; <strong>Weight Limit Exceeded</strong> -- ' + totalWt.toLocaleString() + ' kg loaded, max payload is ' + ct.maxWt.toLocaleString() + ' kg. Split this cargo or upgrade to a higher-capacity container.';
     div.appendChild(w);
   } else if (weightPct !== null && +weightPct > 90) {
-    const w = document.createElement('div'); w.className = 'warn';
-    w.innerHTML = `⚠ <strong>Weight Near Limit</strong> — ${weightPct}% of max payload (${totalWt.toLocaleString()} / ${ct.maxWt.toLocaleString()} kg). Verify gross weight with carrier before booking.`;
+    var w = document.createElement('div'); w.className = 'warn';
+    w.innerHTML = '&#x26A0; <strong>Weight Near Limit</strong> -- ' + weightPct + '% of max payload (' + totalWt.toLocaleString() + ' / ' + ct.maxWt.toLocaleString() + ' kg). Verify gross weight with carrier before booking.';
     div.appendChild(w);
   }
   if (dgConflicts.length) {
-    const w = document.createElement('div'); w.className = 'err';
-    w.innerHTML = `⚠ <strong>DG Conflict</strong> — incompatible classes in same container: ${dgConflicts.join(', ')}. Segregation required — review packing.`;
+    var w = document.createElement('div'); w.className = 'err';
+    w.innerHTML = '&#x26A0; <strong>DG Conflict</strong> -- incompatible classes in same container: ' + dgConflicts.join(', ') + '. Segregation required -- review packing.';
     div.appendChild(w);
   } else if (hasDG) {
-    const dgUnList = [...new Set(packed.filter(p => p.dg && p.dg !== 'none' && p.un).map(p => `${p.un} (Class ${p.dg})`))]
-    const w = document.createElement('div'); w.className = 'warn';
-    w.innerHTML = `⚠ <strong>DG Cargo Present</strong> (${dgBadges}) — verify carrier DG acceptance, placarding and IMDG documentation before booking.${dgUnList.length ? '<br>UN Numbers: ' + dgUnList.join(', ') : ''}`;
+    var dgUnList = packed.filter(function(p){ return p.dg && p.dg !== 'none' && p.un; }).map(function(p){ return p.un + ' (Class ' + p.dg + ')'; }).filter(function(v,i,a){ return a.indexOf(v)===i; });
+    var w = document.createElement('div'); w.className = 'warn';
+    w.innerHTML = '&#x26A0; <strong>DG Cargo Present</strong> (' + dgBadges + ') -- verify carrier DG acceptance, placarding and IMDG documentation before booking.' + (dgUnList.length ? '<br>UN Numbers: ' + dgUnList.join(', ') : '');
     div.appendChild(w);
   }
-  const hViol = packed.filter(p => p.itemH > 0 && p.itemH > ct.h);
+  var hViol = packed.filter(function(p){ return p.itemH > 0 && p.itemH > ct.h; });
   if (hViol.length) {
-    const w = document.createElement('div'); w.className = 'err';
-    w.innerHTML = `⚠ <strong>Height Violation</strong> — ${hViol.map(p=>`${p.caseId} (H=${p.itemH} cm)`).join(', ')} exceed this container's internal height of ${ct.h} cm.`;
+    var w = document.createElement('div'); w.className = 'err';
+    w.innerHTML = '&#x26A0; <strong>Height Violation</strong> -- ' + hViol.map(function(p){ return p.caseId + ' (H=' + p.itemH + ' cm)'; }).join(', ') + " exceed this container's internal height of " + ct.h + ' cm.';
     div.appendChild(w);
   }
-  const SVGW = 560, SVGH = Math.max(80, Math.round(SVGW * (ct.w / ct.l))), sc = SVGW / ct.l;
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  var SVGW = 560, SVGH = Math.max(80, Math.round(SVGW * (ct.w / ct.l))), sc = SVGW / ct.l;
+  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('width', SVGW); svg.setAttribute('height', SVGH);
-  svg.setAttribute('viewBox', `0 0 ${SVGW} ${SVGH}`); svg.classList.add('fp');
-  for (let x = 0; x <= ct.l; x += 50) {
-    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  svg.setAttribute('viewBox', '0 0 ' + SVGW + ' ' + SVGH); svg.classList.add('fp');
+  for (var x = 0; x <= ct.l; x += 50) {
+    var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     ln.setAttribute('x1',x*sc); ln.setAttribute('y1',0); ln.setAttribute('x2',x*sc); ln.setAttribute('y2',SVGH);
     ln.setAttribute('stroke','#bbb'); ln.setAttribute('stroke-width','0.5'); svg.appendChild(ln);
   }
-  for (let y = 0; y <= ct.w; y += 50) {
-    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  for (var y = 0; y <= ct.w; y += 50) {
+    var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     ln.setAttribute('x1',0); ln.setAttribute('y1',y*sc); ln.setAttribute('x2',SVGW); ln.setAttribute('y2',y*sc);
     ln.setAttribute('stroke','#bbb'); ln.setAttribute('stroke-width','0.5'); svg.appendChild(ln);
   }
-  packed.forEach(p => {
-    const rx = p.x*sc, ry = p.y*sc, rw = p.w*sc, rh = p.h*sc;
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  packed.forEach(function(p) {
+    var rx = p.x*sc, ry = p.y*sc, rw = p.w*sc, rh = p.h*sc;
+    var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     rect.setAttribute('x',rx); rect.setAttribute('y',ry); rect.setAttribute('width',rw); rect.setAttribute('height',rh);
     rect.setAttribute('fill',p.color); rect.setAttribute('stroke','#fff'); rect.setAttribute('stroke-width','1.5'); rect.setAttribute('rx','2');
     svg.appendChild(rect);
     if (p.itemH > 0 && p.itemH > ct.h) {
-      const hr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      var hr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       hr.setAttribute('x',rx+2); hr.setAttribute('y',ry+2); hr.setAttribute('width',Math.max(0,rw-4)); hr.setAttribute('height',Math.max(0,rh-4));
       hr.setAttribute('fill','none'); hr.setAttribute('stroke','#ff9800'); hr.setAttribute('stroke-width','2.5'); hr.setAttribute('rx','2');
       svg.appendChild(hr);
     }
     if (p.dg && p.dg !== 'none') {
-      const dr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      var dr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       dr.setAttribute('x',rx+1.5); dr.setAttribute('y',ry+1.5); dr.setAttribute('width',Math.max(0,rw-3)); dr.setAttribute('height',Math.max(0,rh-3));
       dr.setAttribute('fill','none'); dr.setAttribute('stroke','#dc3545'); dr.setAttribute('stroke-width','2'); dr.setAttribute('stroke-dasharray','4,2'); dr.setAttribute('rx','2');
       svg.appendChild(dr);
     }
-    const cc = clientColor(p.client);
-    const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    var cc = clientColor(p.client);
+    var stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     stripe.setAttribute('x',rx); stripe.setAttribute('y',ry); stripe.setAttribute('width',rw); stripe.setAttribute('height',Math.min(4,rh));
     stripe.setAttribute('fill',cc); stripe.setAttribute('opacity','0.7'); svg.appendChild(stripe);
     if (rw > 30 && rh > 18) {
-      const short = p.caseId.replace('G143','').slice(0,6);
-      const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      var short = p.caseId.replace('G143','').slice(0,6);
+      var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       txt.setAttribute('x',rx+rw/2); txt.setAttribute('y',ry+rh/2);
       txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','middle');
       txt.setAttribute('font-size', Math.min(9, rw/Math.max(short.length,1)*1.5));
       txt.setAttribute('fill','#fff'); txt.setAttribute('font-weight','700'); txt.setAttribute('font-family','Arial');
       txt.textContent = short; svg.appendChild(txt);
       if (rh > 26) {
-        const dims = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        var dims = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         dims.setAttribute('x',rx+rw/2); dims.setAttribute('y',ry+rh/2+9);
         dims.setAttribute('text-anchor','middle'); dims.setAttribute('dominant-baseline','middle');
         dims.setAttribute('font-size','7'); dims.setAttribute('fill','rgba(255,255,255,.8)'); dims.setAttribute('font-family','Arial');
-        dims.textContent = `${p.w}×${p.h}`; svg.appendChild(dims);
+        dims.textContent = p.w + 'x' + p.h; svg.appendChild(dims);
       }
     }
     if (p.rotated) {
-      const m = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      var m = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       m.setAttribute('x',rx+3); m.setAttribute('y',ry+11); m.setAttribute('font-size','8'); m.setAttribute('fill','rgba(255,255,255,.7)');
       m.textContent = '↻'; svg.appendChild(m);
     }
   });
-  const dl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  var dl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   dl.setAttribute('x',SVGW/2); dl.setAttribute('y',SVGH-3); dl.setAttribute('text-anchor','middle');
-  dl.setAttribute('font-size','9'); dl.setAttribute('fill','#666'); dl.textContent = `← ${ct.l} cm →`;
+  dl.setAttribute('font-size','9'); dl.setAttribute('fill','#666'); dl.textContent = '← ' + ct.l + ' cm →';
   svg.appendChild(dl);
   div.appendChild(svg);
-  const tbl = document.createElement('table'); tbl.style.marginTop = '10px';
-  tbl.innerHTML = '<thead><tr><th>Case ID</th><th>Description</th><th>L×W (cm)</th><th>H (cm)</th><th>Weight (kg)</th><th>Client</th><th>DG</th><th>UN #</th><th>Position</th></tr></thead>';
-  const tbody = document.createElement('tbody');
-  packed.forEach(p => {
-    const cc = clientColor(p.client);
-    const dgBadge = p.dg && p.dg !== 'none' ? `<span class="tag tag-dg">Class ${p.dg}</span>` : '—';
-    const exclIcon = p.exclusive ? ` <span class="tag tag-excl" title="Exclusive">⚿</span>` : '';
-    const dims = `${p.origL}×${p.origW}${p.rotated ? ' <span class="tag tag-r">rotated</span>' : ''}`;
-    const hCell = p.itemH
-      ? `${p.itemH}${p.itemH > ct.h ? ' <span style="color:#f44336;font-weight:700" title="Exceeds container height">⚠</span>' : ''}`
-      : '—';
-    const tr2 = document.createElement('tr');
-    tr2.innerHTML = `
-      <td><span class="sw" style="background:${p.color}"></span> ${p.caseId}</td>
-      <td>${p.desc}</td>
-      <td>${dims}</td>
-      <td>${hCell}</td>
-      <td>${p.wt || '—'}</td>
-      <td><span class="tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}44">${p.client}</span>${exclIcon}</td>
-      <td>${dgBadge}</td>
-      <td>${p.un ? `<span class="tag tag-n">${p.un}</span>` : '—'}</td>
-      <td><span class="tag tag-n">x${p.x} y${p.y}</span></td>`;
+  var tbl = document.createElement('table'); tbl.style.marginTop = '10px';
+  tbl.innerHTML = '<thead><tr><th>Case ID</th><th>Description</th><th>LxW (cm)</th><th>H (cm)</th><th>Weight (kg)</th><th>Client</th><th>DG</th><th>UN #</th><th>Position</th></tr></thead>';
+  var tbody = document.createElement('tbody');
+  packed.forEach(function(p) {
+    var cc = clientColor(p.client);
+    var dgBadge = p.dg && p.dg !== 'none' ? '<span class="tag tag-dg">Class ' + p.dg + '</span>' : '--';
+    var exclIcon = p.exclusive ? ' <span class="tag tag-excl" title="Exclusive">&#x26BF;</span>' : '';
+    var rotTag = p.rotated ? ' <span class="tag tag-r">rotated</span>' : '';
+    var dims = p.origL + 'x' + p.origW + rotTag;
+    var hCell = p.itemH ? String(p.itemH) + (p.itemH > ct.h ? ' <span style="color:#f44336;font-weight:700" title="Exceeds container height">&#x26A0;</span>' : '') : '--';
+    var tr2 = document.createElement('tr');
+    tr2.innerHTML =
+      '<td><span class="sw" style="background:' + p.color + '"></span> ' + p.caseId + '</td>' +
+      '<td>' + p.desc + '</td>' +
+      '<td>' + dims + '</td>' +
+      '<td>' + hCell + '</td>' +
+      '<td>' + (p.wt || '--') + '</td>' +
+      '<td><span class="tag" style="background:' + cc + '22;color:' + cc + ';border:1px solid ' + cc + '44">' + p.client + '</span>' + exclIcon + '</td>' +
+      '<td>' + dgBadge + '</td>' +
+      '<td>' + (p.un ? '<span class="tag tag-n">' + p.un + '</span>' : '--') + '</td>' +
+      '<td><span class="tag tag-n">x' + p.x + ' y' + p.y + '</span></td>';
     tbody.appendChild(tr2);
   });
   tbl.appendChild(tbody);
@@ -776,12 +797,13 @@ function renderContainer(bin, meta, num) {
   return div;
 }
 
+// -- Sample data
 function loadSample() {
   if (document.querySelectorAll('#tBody tr').length > 0)
     if (!confirm('Replace current list with sample data?')) return;
   document.getElementById('tBody').innerHTML = '';
   rowId = 0; clientColorIdx = 0;
-  Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
+  Object.keys(clientColorMap).forEach(function(k){ delete clientColorMap[k]; });
   document.getElementById('consNo').value = 'ENU100044662';
   [
     {caseId:'G1431014',desc:'CARRIER',    l:102,w:120,h:130,wt:310,client:'1'},
@@ -814,7 +836,7 @@ function loadSample() {
     {caseId:'G1431040B',desc:'AXLE',      l:107,w:153,h: 50,wt:590,client:'3'},
     {caseId:'G1431041',desc:'CARRIER',    l: 94,w: 62,h:130,wt:140,client:'1'},
     {caseId:'G1431042',desc:'MISC',       l:226,w:118,h:180,wt:693,client:'3',exclusive:true}
-  ].forEach(d => addRow(d));
+  ].forEach(function(d){ addRow(d); });
 }
 </script>
 </body>
