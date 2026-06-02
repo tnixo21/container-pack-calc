@@ -102,13 +102,14 @@ details.dg-ref table th{background:#f5f5f5}
         <option value="20std">20ft Standard</option>
         <option value="40std">40ft Standard</option>
         <option value="40hc">40ft High Cube</option>
+        <option value="barge54">54 m Barge</option>
         <option value="custom">Custom</option>
       </select>
     </label>
-    <label>Floor L (cm)<input type="number" id="pL" value="590" min="100" max="2000" style="width:90px"></label>
-    <label>Floor W (cm)<input type="number" id="pW" value="235" min="100" max="500" style="width:90px"></label>
-    <label>Int. Height (cm)<input type="number" id="pH" value="239" min="50" max="400" style="width:90px"></label>
-    <label>Max Payload (kg)<input type="number" id="pMaxWt" value="21700" min="500" max="50000" style="width:100px"></label>
+    <label>Floor L (cm)<input type="number" id="pL" value="590" min="100" max="100000" style="width:90px"></label>
+    <label>Floor W (cm)<input type="number" id="pW" value="235" min="100" max="10000" style="width:90px"></label>
+    <label>Int. Height (cm)<input type="number" id="pH" value="239" min="50" max="10000" style="width:90px"></label>
+    <label>Max Payload (kg)<input type="number" id="pMaxWt" value="21700" min="500" max="999999" style="width:100px"></label>
   </div>
 
   <!-- Secondary (hidden until fleet enabled) -->
@@ -119,13 +120,14 @@ details.dg-ref table th{background:#f5f5f5}
         <option value="40std">40ft Standard</option>
         <option value="40hc">40ft High Cube</option>
         <option value="20std">20ft Standard</option>
+        <option value="barge54">54 m Barge</option>
         <option value="custom">Custom</option>
       </select>
     </label>
-    <label>Floor L (cm)<input type="number" id="sL" value="1204" min="100" max="2000" style="width:90px"></label>
-    <label>Floor W (cm)<input type="number" id="sW" value="235" min="100" max="500" style="width:90px"></label>
-    <label>Int. Height (cm)<input type="number" id="sH" value="239" min="50" max="400" style="width:90px"></label>
-    <label>Max Payload (kg)<input type="number" id="sMaxWt" value="26680" min="500" max="50000" style="width:100px"></label>
+    <label>Floor L (cm)<input type="number" id="sL" value="1204" min="100" max="100000" style="width:90px"></label>
+    <label>Floor W (cm)<input type="number" id="sW" value="235" min="100" max="10000" style="width:90px"></label>
+    <label>Int. Height (cm)<input type="number" id="sH" value="239" min="50" max="10000" style="width:90px"></label>
+    <label>Max Payload (kg)<input type="number" id="sMaxWt" value="26680" min="500" max="999999" style="width:100px"></label>
   </div>
 
   <hr class="divider">
@@ -248,9 +250,10 @@ function clientColor(c) {
 
 // -- Container presets [floorL, floorW, intH, maxPayloadKg]
 const PRESETS = {
-  '20std': [590,  235, 239, 21700],
-  '40std': [1204, 235, 239, 26680],
-  '40hc':  [1204, 235, 269, 26680],
+  '20std':   [590,  235,  239, 21700],
+  '40std':   [1204, 235,  239, 26680],
+  '40hc':    [1204, 235,  269, 26680],
+  'barge54': [5400, 2300, 2000, 30000],
   'custom': null
 };
 
@@ -323,10 +326,10 @@ class MaxRects {
     const nf = [], pw = pl.w+g, ph = pl.h+g;
     for (const r of this.free) {
       if (!this._ov(r, {x:pl.x,y:pl.y,w:pw,h:ph})) { nf.push(r); continue; }
-      if (pl.x > r.x)        nf.push({x:r.x,     y:r.y, w:pl.x-r.x,        h:r.h});
-      if (pl.x+pw < r.x+r.w) nf.push({x:pl.x+pw, y:r.y, w:r.x+r.w-pl.x-pw, h:r.h});
-      if (pl.y > r.y)        nf.push({x:r.x, y:r.y,      w:r.w, h:pl.y-r.y});
-      if (pl.y+ph < r.y+r.h) nf.push({x:r.x, y:pl.y+ph,  w:r.w, h:r.y+r.h-pl.y-ph});
+      if (pl.x > r.x)       nf.push({x:r.x,      y:r.y, w:pl.x-r.x,         h:r.h});
+      if (pl.x+pw < r.x+r.w) nf.push({x:pl.x+pw,  y:r.y, w:r.x+r.w-pl.x-pw, h:r.h});
+      if (pl.y > r.y)       nf.push({x:r.x, y:r.y,      w:r.w, h:pl.y-r.y});
+      if (pl.y+ph < r.y+r.h) nf.push({x:r.x, y:pl.y+ph, w:r.w, h:r.y+r.h-pl.y-ph});
     }
     this.free = nf;
   }
@@ -374,6 +377,7 @@ function packAdvanced(items, containerTypes, gap, rot) {
     let placed = false;
     const tryOrder = [...binState].sort((a, b) =>
       (b.clients.has(item.client) ? 1 : 0) - (a.clients.has(item.client) ? 1 : 0));
+
     for (const bin of tryOrder) {
       if (!canPlace(bin, item)) continue;
       if (bin.mr.insert(item, gap, rot)) {
@@ -384,6 +388,7 @@ function packAdvanced(items, containerTypes, gap, rot) {
         placed = true; break;
       }
     }
+
     if (!placed) {
       for (const ct of containerTypes) {
         if ((item.wt || 0) > ct.maxWt) continue;
@@ -400,6 +405,7 @@ function packAdvanced(items, containerTypes, gap, rot) {
       if (!placed) oversized.push(item);
     }
   }
+
   return { bins: binState.map(b => b.mr), binMeta: binState, oversized };
 }
 
@@ -447,7 +453,6 @@ function addRow(d) {
   const tb = document.getElementById('tBody');
   const n = tb.rows.length + 1;
   const rid = rowId++;
-  // inputs: [0]caseId [1]desc [2]l [3]w [4]h [5]wt [6]qty [7]client [8]excl(checkbox) [9]un
   tb.insertAdjacentHTML('beforeend',
     '<tr data-id="' + rid + '">' +
     '<td style="color:#999;text-align:center">' + n + '</td>' +
@@ -478,23 +483,23 @@ function clearAll() {
 }
 
 function getItems() {
-  var items = [];
+  const items = [];
   document.querySelectorAll('#tBody tr').forEach(function(tr, idx) {
-    var inp = Array.from(tr.querySelectorAll('input'));
-    var sel = tr.querySelector('select');
-    var caseId = inp[0].value.trim() || ('ITEM-' + (idx+1));
-    var desc   = inp[1].value.trim() || '-';
-    var l      = parseFloat(inp[2].value) || 0;
-    var wDim   = parseFloat(inp[3].value) || 0;
-    var itemH  = parseFloat(inp[4].value) || 0;
-    var wt     = parseFloat(inp[5].value) || 0;
-    var qty    = Math.max(1, parseInt(inp[6].value) || 1);
-    var client = (inp[7].value.trim() || '1').toUpperCase();
-    var exclusive = inp[8].checked;
-    var dg = sel ? sel.value : 'none';
-    var un = inp[9].value.trim();
+    const inp = Array.from(tr.querySelectorAll('input'));
+    const sel = tr.querySelector('select');
+    const caseId = inp[0].value.trim() || ('ITEM-' + (idx+1));
+    const desc   = inp[1].value.trim() || '-';
+    const l      = parseFloat(inp[2].value) || 0;
+    const wDim   = parseFloat(inp[3].value) || 0;
+    const itemH  = parseFloat(inp[4].value) || 0;
+    const wt     = parseFloat(inp[5].value) || 0;
+    const qty    = Math.max(1, parseInt(inp[6].value) || 1);
+    const client = (inp[7].value.trim() || '1').toUpperCase();
+    const exclusive = inp[8].checked;
+    const dg = sel ? sel.value : 'none';
+    const un = inp[9].value.trim();
     if (l > 0 && wDim > 0) {
-      for (var q = 0; q < qty; q++) {
+      for (let q = 0; q < qty; q++) {
         items.push({
           uid: items.length,
           caseId: qty > 1 ? caseId + '[' + (q+1) + ']' : caseId,
@@ -508,12 +513,12 @@ function getItems() {
 }
 
 // -- Save / Load (localStorage)
-var STORAGE_KEY = 'cpc_saved_list';
+const STORAGE_KEY = 'cpc_saved_list';
 function saveToStorage() {
-  var data = [];
+  const data = [];
   document.querySelectorAll('#tBody tr').forEach(function(tr) {
-    var inp = Array.from(tr.querySelectorAll('input'));
-    var sel = tr.querySelector('select');
+    const inp = Array.from(tr.querySelectorAll('input'));
+    const sel = tr.querySelector('select');
     data.push({
       caseId: inp[0].value, desc: inp[1].value,
       l: inp[2].value, w: inp[3].value, h: inp[4].value,
@@ -521,14 +526,14 @@ function saveToStorage() {
       exclusive: inp[8].checked, dg: sel ? sel.value : 'none', un: inp[9].value
     });
   });
-  var save = { consNo: document.getElementById('consNo').value, rows: data, ts: new Date().toISOString() };
+  const save = { consNo: document.getElementById('consNo').value, rows: data, ts: new Date().toISOString() };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(save));
   alert('Saved ' + data.length + ' rows at ' + new Date().toLocaleTimeString() + '.');
 }
 function loadFromStorage() {
-  var raw = localStorage.getItem(STORAGE_KEY);
+  const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) { alert('No saved list found.'); return; }
-  var save = JSON.parse(raw);
+  const save = JSON.parse(raw);
   if (!confirm('Load saved list (' + save.rows.length + ' rows, saved ' + new Date(save.ts).toLocaleString() + ')?\nThis will replace the current list.')) return;
   document.getElementById('tBody').innerHTML = '';
   rowId = 0; clientColorIdx = 0;
@@ -540,12 +545,12 @@ function loadFromStorage() {
 // -- Paste from Excel / clipboard
 async function pasteFromClipboard() {
   try {
-    var text = await navigator.clipboard.readText();
+    const text = await navigator.clipboard.readText();
     if (!text.trim()) { alert('Clipboard is empty.'); return; }
-    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
-    var added = 0;
-    lines.forEach(function(line) {
-      var c = line.split('\t').map(function(x){ return x.trim(); });
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    let added = 0;
+    lines.forEach(line => {
+      const c = line.split('\t').map(x => x.trim());
       if (c.length < 3) return;
       addRow({ caseId:c[0], desc:c[1], l:c[2], w:c[3]||'', h:c[4]||'', wt:c[5]||'', qty:c[6]||1,
                client:c[7]||'1', exclusive:c[8]==='1', dg:c[9]||'none', un:c[10]||'' });
@@ -559,13 +564,13 @@ async function pasteFromClipboard() {
 
 // -- CSV import
 function handleCSV(e) {
-  var f = e.target.files[0]; if (!f) return;
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    var lines = ev.target.result.split(/\r?\n/).filter(function(l){ return l.trim(); });
-    var start = isNaN(lines[0].split(',')[0]) ? 1 : 0;
-    lines.slice(start).forEach(function(line) {
-      var c = line.split(',').map(function(x){ return x.trim(); });
+  const f = e.target.files[0]; if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.split(/\r?\n/).filter(l => l.trim());
+    const start = isNaN(lines[0].split(',')[0]) ? 1 : 0;
+    lines.slice(start).forEach(line => {
+      const c = line.split(',').map(x => x.trim());
       addRow({ caseId:c[0], desc:c[1], l:c[2], w:c[3], h:c[4]||'', wt:c[5]||'', qty:c[6]||1,
                client:c[7]||'1', exclusive:c[8]==='1', dg:c[9]||'none', un:c[10]||'' });
     });
@@ -574,15 +579,15 @@ function handleCSV(e) {
 }
 
 // -- Export packing plan to CSV
-var _lastResult = null;
+let _lastResult = null;
 function exportCSV() {
   if (!_lastResult) return;
-  var bins = _lastResult.bins, binMeta = _lastResult.binMeta;
-  var rows = [['Container','Type','Floor L (cm)','Floor W (cm)','Int H (cm)','Max Payload (kg)',
-                'Cargo Wt (kg)','Floor Util %','Case ID','Description',
-                'L (cm)','W (cm)','H (cm)','Weight (kg)','Client','Exclusive','DG Class','UN #','Rotated','Pos X','Pos Y']];
+  const { bins, binMeta } = _lastResult;
+  const rows = [['Container','Type','Floor L (cm)','Floor W (cm)','Int H (cm)','Max Payload (kg)',
+                  'Cargo Wt (kg)','Floor Util %','Case ID','Description',
+                  'L (cm)','W (cm)','H (cm)','Weight (kg)','Client','Exclusive','DG Class','UN #','Rotated','Pos X','Pos Y']];
   binMeta.forEach(function(meta, i) {
-    var bin = bins[i], ct = meta.ctnType;
+    const bin = bins[i], ct = meta.ctnType;
     bin.packed.forEach(function(p) {
       rows.push([
         i+1, ct.label, ct.l, ct.w, ct.h,
@@ -595,8 +600,8 @@ function exportCSV() {
       ]);
     });
   });
-  var csv = rows.map(function(r){ return r.map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
-  var a = document.createElement('a');
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
   a.download = (document.getElementById('consNo').value || 'packing') + '_plan.csv';
   a.click();
@@ -605,40 +610,49 @@ function exportCSV() {
 // -- Calculate
 function calculate() {
   clientColorIdx = 0;
-  Object.keys(clientColorMap).forEach(function(k){ delete clientColorMap[k]; });
-  var items = getItems();
+  Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
+
+  const items = getItems();
   if (!items.length) { alert('Add at least one item with valid dimensions.'); return; }
-  var containerTypes = getContainerTypes();
-  var gap = parseFloat(document.getElementById('gap').value) || 0;
-  var rot = document.getElementById('rotate').value === '1';
-  var descs = items.map(function(i){ return i.desc; }).filter(function(v,i,a){ return a.indexOf(v)===i; });
-  var colorMap = {};
-  descs.forEach(function(d,i){ colorMap[d] = ITEM_COLORS[i % ITEM_COLORS.length]; });
-  items.forEach(function(it){ it.color = colorMap[it.desc]; });
-  var result = packAdvanced(items, containerTypes, gap, rot);
-  var bins = result.bins, binMeta = result.binMeta, oversized = result.oversized;
-  _lastResult = { bins: bins, binMeta: binMeta, oversized: oversized, containerTypes: containerTypes };
-  var totalWt = items.reduce(function(s,i){ return s + i.wt; }, 0);
-  var avgUtil = bins.length ? bins.reduce(function(s,b){ return s + b.util(); }, 0) / bins.length : 0;
-  var fcl = getFCLLCL(binMeta, items, containerTypes);
-  var ct0 = containerTypes[0];
+
+  const containerTypes = getContainerTypes();
+  const gap = parseFloat(document.getElementById('gap').value) || 0;
+  const rot = document.getElementById('rotate').value === '1';
+
+  const descs = [...new Set(items.map(i => i.desc))];
+  const colorMap = {}; descs.forEach((d,i) => colorMap[d] = ITEM_COLORS[i % ITEM_COLORS.length]);
+  items.forEach(it => it.color = colorMap[it.desc]);
+
+  const { bins, binMeta, oversized } = packAdvanced(items, containerTypes, gap, rot);
+  _lastResult = { bins, binMeta, oversized, containerTypes };
+
+  const totalWt = items.reduce((s, i) => s + i.wt, 0);
+  const avgUtil = bins.length ? bins.reduce((s,b) => s + b.util(), 0) / bins.length : 0;
+  const fcl = getFCLLCL(binMeta, items, containerTypes);
+  const ct0 = containerTypes[0];
+
   document.getElementById('sC').textContent = bins.length;
   document.getElementById('sS').textContent = items.length;
   document.getElementById('sTW').textContent = totalWt.toLocaleString();
   document.getElementById('sU').textContent = avgUtil.toFixed(1) + '%';
   document.getElementById('sA').textContent = ((ct0.l * ct0.w) / 10000).toFixed(2);
   document.getElementById('sFCL').innerHTML = '<span class="tag ' + fcl.cls + '" style="font-size:.95rem;padding:4px 10px">' + fcl.rec + '</span>';
-  document.getElementById('fclBanner').innerHTML = '<div class="' + (fcl.rec === 'LCL' ? 'warn' : 'info') + '"><strong>Shipment Mode: ' + fcl.rec + '</strong> -- ' + fcl.detail + '</div>';
-  var cr = document.getElementById('ctnResults'); cr.innerHTML = '';
-  binMeta.forEach(function(meta, i){ cr.appendChild(renderContainer(bins[i], meta, i+1)); });
-  var od = document.getElementById('oversized'); od.innerHTML = '';
-  var msgs = [];
+  document.getElementById('fclBanner').innerHTML =
+    '<div class="' + (fcl.rec === 'LCL' ? 'warn' : 'info') + '"><strong>Shipment Mode: ' + fcl.rec + '</strong> -- ' + fcl.detail + '</div>';
+
+  const cr = document.getElementById('ctnResults'); cr.innerHTML = '';
+  binMeta.forEach((meta, i) => cr.appendChild(renderContainer(bins[i], meta, i+1)));
+
+  const od = document.getElementById('oversized'); od.innerHTML = '';
+  const msgs = [];
   if (oversized.length)
-    msgs.push('<div class="err">&#x26A0; <strong>' + oversized.length + ' item(s) could not be placed</strong> (too large for any container floor even when rotated): ' + oversized.map(function(i){ return '<strong>' + i.caseId + '</strong> (' + i.origL + 'x' + i.origW + ' cm)'; }).join(', ') + '</div>');
-  var maxContainerH = Math.max.apply(null, containerTypes.map(function(ct){ return ct.h; }));
-  var heightBad = items.filter(function(i){ return i.itemH > 0 && i.itemH > maxContainerH; });
+    msgs.push('<div class="err">&#x26A0; <strong>' + oversized.length + ' item(s) could not be placed</strong> (too large for any container floor even when rotated): ' + oversized.map(i => '<strong>' + i.caseId + '</strong> (' + i.origL + 'x' + i.origW + ' cm)').join(', ') + '</div>');
+
+  const maxContainerH = Math.max(...containerTypes.map(ct => ct.h));
+  const heightBad = items.filter(i => i.itemH > 0 && i.itemH > maxContainerH);
   if (heightBad.length)
-    msgs.push('<div class="err">&#x26A0; <strong>' + heightBad.length + ' item(s) exceed all container heights</strong> (max ' + maxContainerH + ' cm): ' + heightBad.map(function(i){ return '<strong>' + i.caseId + '</strong> (H=' + i.itemH + ' cm)'; }).join(', ') + ' -- verify clearance with carrier.</div>');
+    msgs.push('<div class="err">&#x26A0; <strong>' + heightBad.length + ' item(s) exceed all container heights</strong> (max ' + maxContainerH + ' cm): ' + heightBad.map(i => '<strong>' + i.caseId + '</strong> (H=' + i.itemH + ' cm)').join(', ') + ' -- verify clearance with carrier.</div>');
+
   od.innerHTML = msgs.join('');
   document.getElementById('results').style.display = 'block';
   document.getElementById('exportBtn').style.display = 'inline-block';
@@ -647,111 +661,190 @@ function calculate() {
 
 // -- Render one container card
 function renderContainer(bin, meta, num) {
-  var div = document.createElement('div');
+  const div = document.createElement('div');
   div.className = 'ctn-card';
-  var packed = bin.packed;
-  var util = bin.util();
-  var ct = meta.ctnType;
-  var totalWt = meta.currentWt;
-  var weightPct = ct.maxWt < Infinity ? (totalWt / ct.maxWt * 100).toFixed(0) : null;
-  var weightOver = ct.maxWt < Infinity && totalWt > ct.maxWt;
-  var clients = Array.from(meta.clients).sort();
-  var dgClasses = Array.from(meta.dgClasses).sort();
-  var hasDG = dgClasses.length > 0;
-  var dgConflicts = [];
+  const packed = bin.packed;
+  const util = bin.util();
+  const ct = meta.ctnType;
+  const totalWt = meta.currentWt;
+  const weightPct = ct.maxWt < Infinity ? (totalWt / ct.maxWt * 100).toFixed(0) : null;
+  const weightOver = ct.maxWt < Infinity && totalWt > ct.maxWt;
+  const clients = [...meta.clients].sort();
+  const dgClasses = [...meta.dgClasses].sort();
+  const hasDG = dgClasses.length > 0;
+
+  // Large-vessel detection and mass-weighted centre of gravity
+  const isBarge = ct.l > 2000;
+  const massPacked = packed.reduce((s,p) => s + (p.wt||0), 0);
+  let cogX = null, cogY = null;
+  if (massPacked > 0) {
+    cogX = packed.reduce((s,p) => s + (p.wt||0)*(p.x+p.w/2), 0) / massPacked;
+    cogY = packed.reduce((s,p) => s + (p.wt||0)*(p.y+p.h/2), 0) / massPacked;
+  }
+  const cogLPct  = cogX !== null ? (cogX/ct.l*100).toFixed(1) : null;
+  const cogTPct  = cogY !== null ? (cogY/ct.w*100).toFixed(1) : null;
+  const longOff  = cogX !== null ? (cogX - ct.l/2)/ct.l*100 : 0;
+  const transOff = cogY !== null ? (cogY - ct.w/2)/ct.w*100 : 0;
+
+  const dgConflicts = [];
   if (hasDG) {
-    var arr = Array.from(meta.dgClasses);
-    for (var i = 0; i < arr.length; i++)
-      for (var j = i+1; j < arr.length; j++)
+    const arr = [...meta.dgClasses];
+    for (let i = 0; i < arr.length; i++)
+      for (let j = i+1; j < arr.length; j++)
         if (dgConflict(arr[i], arr[j])) dgConflicts.push('Class ' + arr[i] + ' + Class ' + arr[j]);
   }
+
   if (weightOver) div.classList.add('weight-over');
   if (dgConflicts.length) div.classList.add('dg-conflict');
   else if (hasDG) div.classList.add('has-dg');
-  var clientBadges = clients.map(function(c) {
-    var cc = clientColor(c);
+
+  const clientBadges = clients.map(c => {
+    const cc = clientColor(c);
     return '<span class="tag" style="background:' + cc + '22;color:' + cc + ';border:1px solid ' + cc + '55">Client ' + c + '</span>';
   }).join('');
-  var dgBadges = dgClasses.map(function(d){ return '<span class="tag tag-dg">DG ' + d + '</span>'; }).join('');
-  var exclBadge = meta.lockedClient ? '<span class="tag tag-excl">Exclusive -- Client ' + meta.lockedClient + '</span>' : '';
-  var wtStr = ct.maxWt < Infinity
+  const dgBadges = dgClasses.map(d => '<span class="tag tag-dg">DG ' + d + '</span>').join('');
+  const exclBadge = meta.lockedClient ? '<span class="tag tag-excl">Exclusive -- Client ' + meta.lockedClient + '</span>' : '';
+
+  const wtStr = ct.maxWt < Infinity
     ? totalWt.toLocaleString() + ' / ' + ct.maxWt.toLocaleString() + ' kg (' + weightPct + '%)'
     : totalWt.toLocaleString() + ' kg';
+
+  const dimStr = isBarge
+    ? (ct.l/100).toFixed(0) + 'x' + (ct.w/100).toFixed(0) + ' m, H ' + (ct.h/100).toFixed(0) + ' m'
+    : ct.l + 'x' + ct.w + ' cm, H ' + ct.h + ' cm';
+  const cogStr = cogLPct !== null ? ' &nbsp;|&nbsp; CoG: <strong>L ' + cogLPct + '%</strong> / <strong>T ' + cogTPct + '%</strong>' : '';
+
   div.innerHTML =
     '<h3><span class="ctn-type-chip ' + ct.chipClass + '">' + ct.label + '</span>Container ' + num + '</h3>' +
-    '<div class="ctn-meta">' + packed.length + ' skids &nbsp;|&nbsp; Floor: <strong>' + util.toFixed(1) + '%</strong> &nbsp;|&nbsp; Weight: <strong>' + wtStr + '</strong> &nbsp;|&nbsp; ' + ct.l + 'x' + ct.w + ' cm, H ' + ct.h + ' cm</div>' +
+    '<div class="ctn-meta">' + packed.length + ' skids &nbsp;|&nbsp; Floor: <strong>' + util.toFixed(1) + '%</strong> &nbsp;|&nbsp; Weight: <strong>' + wtStr + '</strong> &nbsp;|&nbsp; ' + dimStr + cogStr + '</div>' +
     '<div style="margin-bottom:8px;line-height:1.8">' + clientBadges + exclBadge + dgBadges + '</div>';
+
   if (weightOver) {
-    var w = document.createElement('div'); w.className = 'err';
+    const w = document.createElement('div'); w.className = 'err';
     w.innerHTML = '&#x26A0; <strong>Weight Limit Exceeded</strong> -- ' + totalWt.toLocaleString() + ' kg loaded, max payload is ' + ct.maxWt.toLocaleString() + ' kg. Split this cargo or upgrade to a higher-capacity container.';
     div.appendChild(w);
   } else if (weightPct !== null && +weightPct > 90) {
-    var w = document.createElement('div'); w.className = 'warn';
+    const w = document.createElement('div'); w.className = 'warn';
     w.innerHTML = '&#x26A0; <strong>Weight Near Limit</strong> -- ' + weightPct + '% of max payload (' + totalWt.toLocaleString() + ' / ' + ct.maxWt.toLocaleString() + ' kg). Verify gross weight with carrier before booking.';
     div.appendChild(w);
   }
+
   if (dgConflicts.length) {
-    var w = document.createElement('div'); w.className = 'err';
+    const w = document.createElement('div'); w.className = 'err';
     w.innerHTML = '&#x26A0; <strong>DG Conflict</strong> -- incompatible classes in same container: ' + dgConflicts.join(', ') + '. Segregation required -- review packing.';
     div.appendChild(w);
   } else if (hasDG) {
-    var dgUnList = packed.filter(function(p){ return p.dg && p.dg !== 'none' && p.un; }).map(function(p){ return p.un + ' (Class ' + p.dg + ')'; }).filter(function(v,i,a){ return a.indexOf(v)===i; });
-    var w = document.createElement('div'); w.className = 'warn';
+    const dgUnList = [...new Set(packed.filter(p => p.dg && p.dg !== 'none' && p.un).map(p => p.un + ' (Class ' + p.dg + ')'))];
+    const w = document.createElement('div'); w.className = 'warn';
     w.innerHTML = '&#x26A0; <strong>DG Cargo Present</strong> (' + dgBadges + ') -- verify carrier DG acceptance, placarding and IMDG documentation before booking.' + (dgUnList.length ? '<br>UN Numbers: ' + dgUnList.join(', ') : '');
     div.appendChild(w);
   }
-  var hViol = packed.filter(function(p){ return p.itemH > 0 && p.itemH > ct.h; });
+
+  const hViol = packed.filter(p => p.itemH > 0 && p.itemH > ct.h);
   if (hViol.length) {
-    var w = document.createElement('div'); w.className = 'err';
-    w.innerHTML = '&#x26A0; <strong>Height Violation</strong> -- ' + hViol.map(function(p){ return p.caseId + ' (H=' + p.itemH + ' cm)'; }).join(', ') + " exceed this container's internal height of " + ct.h + ' cm.';
+    const w = document.createElement('div'); w.className = 'err';
+    w.innerHTML = '&#x26A0; <strong>Height Violation</strong> -- ' + hViol.map(p => p.caseId + ' (H=' + p.itemH + ' cm)').join(', ') + " exceed this container's internal height of " + ct.h + ' cm.';
     div.appendChild(w);
   }
-  var SVGW = 560, SVGH = Math.max(80, Math.round(SVGW * (ct.w / ct.l))), sc = SVGW / ct.l;
-  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+  // Barge: stability check and zone weight distribution
+  if (isBarge && cogX !== null) {
+    const longDir  = longOff  > 0 ? Math.abs(longOff).toFixed(1)  + '% aft of centre' : Math.abs(longOff).toFixed(1)  + '% fwd of centre';
+    const transDir = transOff > 0 ? Math.abs(transOff).toFixed(1) + '% to starboard'  : Math.abs(transOff).toFixed(1) + '% to port';
+    if (Math.abs(longOff) > 15 || Math.abs(transOff) > 8) {
+      const w = document.createElement('div'); w.className = 'err';
+      w.innerHTML = '&#x26A0; <strong>Load Imbalance</strong> -- CoG is ' + longDir + ' longitudinally and ' + transDir + ' transversely. Redistribute cargo to correct trim and list before departure.';
+      div.appendChild(w);
+    } else if (Math.abs(longOff) > 8 || Math.abs(transOff) > 5) {
+      const w = document.createElement('div'); w.className = 'warn';
+      w.innerHTML = '&#x26A0; <strong>Moderate Imbalance</strong> -- CoG is ' + longDir + ' longitudinally and ' + transDir + ' transversely. Verify trim with marine surveyor.';
+      div.appendChild(w);
+    }
+    const zL = ct.l / 3;
+    const zoneWts = [
+      {name:'Fore', wt: packed.filter(p => p.x+p.w/2 < zL).reduce((s,p) => s+(p.wt||0), 0)},
+      {name:'Mid',  wt: packed.filter(p => p.x+p.w/2 >= zL && p.x+p.w/2 < 2*zL).reduce((s,p) => s+(p.wt||0), 0)},
+      {name:'Aft',  wt: packed.filter(p => p.x+p.w/2 >= 2*zL).reduce((s,p) => s+(p.wt||0), 0)}
+    ];
+    const zDiv = document.createElement('div');
+    zDiv.className = 'info'; zDiv.style.marginTop = '8px';
+    zDiv.innerHTML = '&#x2693; <strong>Zone Weights</strong> -- ' +
+      zoneWts.map(z => '<strong>' + z.name + ':</strong> ' + z.wt.toLocaleString() + ' kg (' + (massPacked > 0 ? (z.wt/massPacked*100).toFixed(1) : 0) + '%)').join(' &nbsp;|&nbsp; ');
+    div.appendChild(zDiv);
+  }
+
+  // SVG floor plan
+  const SVGW = 560, SVGH = Math.max(80, Math.round(SVGW * (ct.w / ct.l))), sc = SVGW / ct.l;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('width', SVGW); svg.setAttribute('height', SVGH);
   svg.setAttribute('viewBox', '0 0 ' + SVGW + ' ' + SVGH); svg.classList.add('fp');
-  for (var x = 0; x <= ct.l; x += 50) {
-    var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+
+  // Grid lines -- 500 cm (5 m) for large vessels, 50 cm for containers
+  const gridStep = ct.l > 2000 ? 500 : 50;
+  for (let x = 0; x <= ct.l; x += gridStep) {
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     ln.setAttribute('x1',x*sc); ln.setAttribute('y1',0); ln.setAttribute('x2',x*sc); ln.setAttribute('y2',SVGH);
     ln.setAttribute('stroke','#bbb'); ln.setAttribute('stroke-width','0.5'); svg.appendChild(ln);
   }
-  for (var y = 0; y <= ct.w; y += 50) {
-    var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  for (let y = 0; y <= ct.w; y += gridStep) {
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     ln.setAttribute('x1',0); ln.setAttribute('y1',y*sc); ln.setAttribute('x2',SVGW); ln.setAttribute('y2',y*sc);
     ln.setAttribute('stroke','#bbb'); ln.setAttribute('stroke-width','0.5'); svg.appendChild(ln);
   }
-  packed.forEach(function(p) {
-    var rx = p.x*sc, ry = p.y*sc, rw = p.w*sc, rh = p.h*sc;
-    var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+  // Barge: longitudinal centreline + Fore/Mid/Aft zone dividers
+  if (isBarge) {
+    const cl = document.createElementNS('http://www.w3.org/2000/svg','line');
+    cl.setAttribute('x1',0); cl.setAttribute('y1',SVGH/2); cl.setAttribute('x2',SVGW); cl.setAttribute('y2',SVGH/2);
+    cl.setAttribute('stroke','#aaa'); cl.setAttribute('stroke-width','0.8'); cl.setAttribute('stroke-dasharray','6,4');
+    svg.appendChild(cl);
+    [ct.l/3, 2*ct.l/3].forEach(xz => {
+      const zl = document.createElementNS('http://www.w3.org/2000/svg','line');
+      zl.setAttribute('x1',xz*sc); zl.setAttribute('y1',0); zl.setAttribute('x2',xz*sc); zl.setAttribute('y2',SVGH);
+      zl.setAttribute('stroke','#888'); zl.setAttribute('stroke-width','1'); zl.setAttribute('stroke-dasharray','4,3');
+      svg.appendChild(zl);
+    });
+    ['Fore','Mid','Aft'].forEach((label,i) => {
+      const lt = document.createElementNS('http://www.w3.org/2000/svg','text');
+      lt.setAttribute('x',(i*ct.l/3 + ct.l/6)*sc); lt.setAttribute('y',10);
+      lt.setAttribute('text-anchor','middle'); lt.setAttribute('font-size','9');
+      lt.setAttribute('fill','#666'); lt.setAttribute('font-weight','700');
+      lt.textContent = label; svg.appendChild(lt);
+    });
+  }
+
+  packed.forEach(p => {
+    const rx = p.x*sc, ry = p.y*sc, rw = p.w*sc, rh = p.h*sc;
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     rect.setAttribute('x',rx); rect.setAttribute('y',ry); rect.setAttribute('width',rw); rect.setAttribute('height',rh);
     rect.setAttribute('fill',p.color); rect.setAttribute('stroke','#fff'); rect.setAttribute('stroke-width','1.5'); rect.setAttribute('rx','2');
     svg.appendChild(rect);
     if (p.itemH > 0 && p.itemH > ct.h) {
-      var hr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      const hr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       hr.setAttribute('x',rx+2); hr.setAttribute('y',ry+2); hr.setAttribute('width',Math.max(0,rw-4)); hr.setAttribute('height',Math.max(0,rh-4));
       hr.setAttribute('fill','none'); hr.setAttribute('stroke','#ff9800'); hr.setAttribute('stroke-width','2.5'); hr.setAttribute('rx','2');
       svg.appendChild(hr);
     }
     if (p.dg && p.dg !== 'none') {
-      var dr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      const dr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       dr.setAttribute('x',rx+1.5); dr.setAttribute('y',ry+1.5); dr.setAttribute('width',Math.max(0,rw-3)); dr.setAttribute('height',Math.max(0,rh-3));
       dr.setAttribute('fill','none'); dr.setAttribute('stroke','#dc3545'); dr.setAttribute('stroke-width','2'); dr.setAttribute('stroke-dasharray','4,2'); dr.setAttribute('rx','2');
       svg.appendChild(dr);
     }
-    var cc = clientColor(p.client);
-    var stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    const cc = clientColor(p.client);
+    const stripe = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     stripe.setAttribute('x',rx); stripe.setAttribute('y',ry); stripe.setAttribute('width',rw); stripe.setAttribute('height',Math.min(4,rh));
     stripe.setAttribute('fill',cc); stripe.setAttribute('opacity','0.7'); svg.appendChild(stripe);
     if (rw > 30 && rh > 18) {
-      var short = p.caseId.replace('G143','').slice(0,6);
-      var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      const short = p.caseId.replace('G143','').slice(0,6);
+      const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       txt.setAttribute('x',rx+rw/2); txt.setAttribute('y',ry+rh/2);
       txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','middle');
       txt.setAttribute('font-size', Math.min(9, rw/Math.max(short.length,1)*1.5));
       txt.setAttribute('fill','#fff'); txt.setAttribute('font-weight','700'); txt.setAttribute('font-family','Arial');
       txt.textContent = short; svg.appendChild(txt);
       if (rh > 26) {
-        var dims = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        const dims = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         dims.setAttribute('x',rx+rw/2); dims.setAttribute('y',ry+rh/2+9);
         dims.setAttribute('text-anchor','middle'); dims.setAttribute('dominant-baseline','middle');
         dims.setAttribute('font-size','7'); dims.setAttribute('fill','rgba(255,255,255,.8)'); dims.setAttribute('font-family','Arial');
@@ -759,27 +852,51 @@ function renderContainer(bin, meta, num) {
       }
     }
     if (p.rotated) {
-      var m = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      const m = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       m.setAttribute('x',rx+3); m.setAttribute('y',ry+11); m.setAttribute('font-size','8'); m.setAttribute('fill','rgba(255,255,255,.7)');
-      m.textContent = '↻'; svg.appendChild(m);
+      m.textContent = '&#x21BB;'; svg.appendChild(m);
     }
   });
-  var dl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+
+  // Centre-of-gravity crosshair
+  if (cogX !== null) {
+    const cx = cogX*sc, cy = cogY*sc;
+    const cogColor = (Math.abs(longOff)>15||Math.abs(transOff)>8) ? '#dc3545'
+                   : (Math.abs(longOff)>8 ||Math.abs(transOff)>5) ? '#e67e22' : '#27ae60';
+    [[cx-14,cy,cx+14,cy],[cx,cy-14,cx,cy+14]].forEach(([x1,y1,x2,y2]) => {
+      const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('x1',x1); ln.setAttribute('y1',y1); ln.setAttribute('x2',x2); ln.setAttribute('y2',y2);
+      ln.setAttribute('stroke',cogColor); ln.setAttribute('stroke-width','2'); ln.setAttribute('stroke-dasharray','3,2');
+      svg.appendChild(ln);
+    });
+    const circ = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circ.setAttribute('cx',cx); circ.setAttribute('cy',cy); circ.setAttribute('r','5');
+    circ.setAttribute('fill',cogColor+'33'); circ.setAttribute('stroke',cogColor); circ.setAttribute('stroke-width','2');
+    svg.appendChild(circ);
+    const cogLbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    cogLbl.setAttribute('x', Math.min(cx+8, SVGW-28)); cogLbl.setAttribute('y', Math.max(cy-7, 9));
+    cogLbl.setAttribute('font-size','8'); cogLbl.setAttribute('fill',cogColor); cogLbl.setAttribute('font-weight','700');
+    cogLbl.textContent = 'CoG'; svg.appendChild(cogLbl);
+  }
+
+  const dl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   dl.setAttribute('x',SVGW/2); dl.setAttribute('y',SVGH-3); dl.setAttribute('text-anchor','middle');
-  dl.setAttribute('font-size','9'); dl.setAttribute('fill','#666'); dl.textContent = '← ' + ct.l + ' cm →';
+  dl.setAttribute('font-size','9'); dl.setAttribute('fill','#666');
+  dl.textContent = isBarge ? ('&#x2190; ' + (ct.l/100).toFixed(0) + ' m &#x2192;') : ('&#x2190; ' + ct.l + ' cm &#x2192;');
   svg.appendChild(dl);
   div.appendChild(svg);
-  var tbl = document.createElement('table'); tbl.style.marginTop = '10px';
+
+  const tbl = document.createElement('table'); tbl.style.marginTop = '10px';
   tbl.innerHTML = '<thead><tr><th>Case ID</th><th>Description</th><th>LxW (cm)</th><th>H (cm)</th><th>Weight (kg)</th><th>Client</th><th>DG</th><th>UN #</th><th>Position</th></tr></thead>';
-  var tbody = document.createElement('tbody');
-  packed.forEach(function(p) {
-    var cc = clientColor(p.client);
-    var dgBadge = p.dg && p.dg !== 'none' ? '<span class="tag tag-dg">Class ' + p.dg + '</span>' : '--';
-    var exclIcon = p.exclusive ? ' <span class="tag tag-excl" title="Exclusive">&#x26BF;</span>' : '';
-    var rotTag = p.rotated ? ' <span class="tag tag-r">rotated</span>' : '';
-    var dims = p.origL + 'x' + p.origW + rotTag;
-    var hCell = p.itemH ? String(p.itemH) + (p.itemH > ct.h ? ' <span style="color:#f44336;font-weight:700" title="Exceeds container height">&#x26A0;</span>' : '') : '--';
-    var tr2 = document.createElement('tr');
+  const tbody = document.createElement('tbody');
+  packed.forEach(p => {
+    const cc = clientColor(p.client);
+    const dgBadge = p.dg && p.dg !== 'none' ? '<span class="tag tag-dg">Class ' + p.dg + '</span>' : '--';
+    const exclIcon = p.exclusive ? ' <span class="tag tag-excl" title="Exclusive">&#x26BF;</span>' : '';
+    const rotTag = p.rotated ? ' <span class="tag tag-r">rotated</span>' : '';
+    const dims = p.origL + 'x' + p.origW + rotTag;
+    const hCell = p.itemH ? String(p.itemH) + (p.itemH > ct.h ? ' <span style="color:#f44336;font-weight:700" title="Exceeds container height">&#x26A0;</span>' : '') : '--';
+    const tr2 = document.createElement('tr');
     tr2.innerHTML =
       '<td><span class="sw" style="background:' + p.color + '"></span> ' + p.caseId + '</td>' +
       '<td>' + p.desc + '</td>' +
@@ -803,7 +920,7 @@ function loadSample() {
     if (!confirm('Replace current list with sample data?')) return;
   document.getElementById('tBody').innerHTML = '';
   rowId = 0; clientColorIdx = 0;
-  Object.keys(clientColorMap).forEach(function(k){ delete clientColorMap[k]; });
+  Object.keys(clientColorMap).forEach(k => delete clientColorMap[k]);
   document.getElementById('consNo').value = 'ENU100044662';
   [
     {caseId:'G1431014',desc:'CARRIER',    l:102,w:120,h:130,wt:310,client:'1'},
@@ -836,7 +953,7 @@ function loadSample() {
     {caseId:'G1431040B',desc:'AXLE',      l:107,w:153,h: 50,wt:590,client:'3'},
     {caseId:'G1431041',desc:'CARRIER',    l: 94,w: 62,h:130,wt:140,client:'1'},
     {caseId:'G1431042',desc:'MISC',       l:226,w:118,h:180,wt:693,client:'3',exclusive:true}
-  ].forEach(function(d){ addRow(d); });
+  ].forEach(d => addRow(d));
 }
 </script>
 </body>
