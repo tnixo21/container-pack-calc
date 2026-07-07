@@ -458,11 +458,11 @@ function addRow(d) {
     '<td style="color:#999;text-align:center">' + n + '</td>' +
     '<td><input type="text" value="' + esc(d.caseId || '') + '" placeholder="G1431014"></td>' +
     '<td><input type="text" value="' + esc(d.desc || '') + '" placeholder="CARRIER"></td>' +
-    '<td><input type="number" value="' + (d.l || '') + '" min="1" placeholder="120" style="width:58px"></td>' +
-    '<td><input type="number" value="' + (d.w || '') + '" min="1" placeholder="100" style="width:58px"></td>' +
-    '<td><input type="number" value="' + (d.h || '') + '" min="1" placeholder="120" style="width:58px" title="Item height (cm)"></td>' +
-    '<td><input type="number" value="' + (d.wt || '') + '" min="0" placeholder="300" style="width:64px"></td>' +
-    '<td><input type="number" value="' + (d.qty || 1) + '" min="1" max="99" style="width:42px"></td>' +
+    '<td><input type="number" value="' + esc(d.l || '') + '" min="1" placeholder="120" style="width:58px"></td>' +
+    '<td><input type="number" value="' + esc(d.w || '') + '" min="1" placeholder="100" style="width:58px"></td>' +
+    '<td><input type="number" value="' + esc(d.h || '') + '" min="1" placeholder="120" style="width:58px" title="Item height (cm)"></td>' +
+    '<td><input type="number" value="' + esc(d.wt || '') + '" min="0" placeholder="300" style="width:64px"></td>' +
+    '<td><input type="number" value="' + esc(d.qty || 1) + '" min="1" max="99" style="width:42px"></td>' +
     '<td><input type="text" value="' + esc(d.client || '1') + '" placeholder="1" style="width:46px" title="Client / consignee ID"></td>' +
     '<td style="text-align:center"><input type="checkbox"' + (d.exclusive ? ' checked' : '') + ' title="Exclusive"></td>' +
     '<td>' + dgSel(d.dg || 'none') + '</td>' +
@@ -646,12 +646,12 @@ function calculate() {
   const od = document.getElementById('oversized'); od.innerHTML = '';
   const msgs = [];
   if (oversized.length)
-    msgs.push('<div class="err">&#x26A0; <strong>' + oversized.length + ' item(s) could not be placed</strong> (too large for any container floor even when rotated): ' + oversized.map(i => '<strong>' + i.caseId + '</strong> (' + i.origL + 'x' + i.origW + ' cm)').join(', ') + '</div>');
+    msgs.push('<div class="err">&#x26A0; <strong>' + oversized.length + ' item(s) could not be placed</strong> (too large for any container floor even when rotated): ' + oversized.map(i => '<strong>' + esc(i.caseId) + '</strong> (' + i.origL + 'x' + i.origW + ' cm)').join(', ') + '</div>');
 
   const maxContainerH = Math.max(...containerTypes.map(ct => ct.h));
   const heightBad = items.filter(i => i.itemH > 0 && i.itemH > maxContainerH);
   if (heightBad.length)
-    msgs.push('<div class="err">&#x26A0; <strong>' + heightBad.length + ' item(s) exceed all container heights</strong> (max ' + maxContainerH + ' cm): ' + heightBad.map(i => '<strong>' + i.caseId + '</strong> (H=' + i.itemH + ' cm)').join(', ') + ' -- verify clearance with carrier.</div>');
+    msgs.push('<div class="err">&#x26A0; <strong>' + heightBad.length + ' item(s) exceed all container heights</strong> (max ' + maxContainerH + ' cm): ' + heightBad.map(i => '<strong>' + esc(i.caseId) + '</strong> (H=' + i.itemH + ' cm)').join(', ') + ' -- verify clearance with carrier.</div>');
 
   od.innerHTML = msgs.join('');
   document.getElementById('results').style.display = 'block';
@@ -691,7 +691,7 @@ function renderContainer(bin, meta, num) {
     const arr = [...meta.dgClasses];
     for (let i = 0; i < arr.length; i++)
       for (let j = i+1; j < arr.length; j++)
-        if (dgConflict(arr[i], arr[j])) dgConflicts.push('Class ' + arr[i] + ' + Class ' + arr[j]);
+        if (dgConflict(arr[i], arr[j])) dgConflicts.push('Class ' + esc(arr[i]) + ' + Class ' + esc(arr[j]));
   }
 
   if (weightOver) div.classList.add('weight-over');
@@ -700,10 +700,10 @@ function renderContainer(bin, meta, num) {
 
   const clientBadges = clients.map(c => {
     const cc = clientColor(c);
-    return '<span class="tag" style="background:' + cc + '22;color:' + cc + ';border:1px solid ' + cc + '55">Client ' + c + '</span>';
+    return '<span class="tag" style="background:' + cc + '22;color:' + cc + ';border:1px solid ' + cc + '55">Client ' + esc(c) + '</span>';
   }).join('');
-  const dgBadges = dgClasses.map(d => '<span class="tag tag-dg">DG ' + d + '</span>').join('');
-  const exclBadge = meta.lockedClient ? '<span class="tag tag-excl">Exclusive -- Client ' + meta.lockedClient + '</span>' : '';
+  const dgBadges = dgClasses.map(d => '<span class="tag tag-dg">DG ' + esc(d) + '</span>').join('');
+  const exclBadge = meta.lockedClient ? '<span class="tag tag-excl">Exclusive -- Client ' + esc(meta.lockedClient) + '</span>' : '';
 
   const wtStr = ct.maxWt < Infinity
     ? totalWt.toLocaleString() + ' / ' + ct.maxWt.toLocaleString() + ' kg (' + weightPct + '%)'
@@ -734,7 +734,7 @@ function renderContainer(bin, meta, num) {
     w.innerHTML = '&#x26A0; <strong>DG Conflict</strong> -- incompatible classes in same container: ' + dgConflicts.join(', ') + '. Segregation required -- review packing.';
     div.appendChild(w);
   } else if (hasDG) {
-    const dgUnList = [...new Set(packed.filter(p => p.dg && p.dg !== 'none' && p.un).map(p => p.un + ' (Class ' + p.dg + ')'))];
+    const dgUnList = [...new Set(packed.filter(p => p.dg && p.dg !== 'none' && p.un).map(p => esc(p.un) + ' (Class ' + esc(p.dg) + ')'))];
     const w = document.createElement('div'); w.className = 'warn';
     w.innerHTML = '&#x26A0; <strong>DG Cargo Present</strong> (' + dgBadges + ') -- verify carrier DG acceptance, placarding and IMDG documentation before booking.' + (dgUnList.length ? '<br>UN Numbers: ' + dgUnList.join(', ') : '');
     div.appendChild(w);
@@ -743,7 +743,7 @@ function renderContainer(bin, meta, num) {
   const hViol = packed.filter(p => p.itemH > 0 && p.itemH > ct.h);
   if (hViol.length) {
     const w = document.createElement('div'); w.className = 'err';
-    w.innerHTML = '&#x26A0; <strong>Height Violation</strong> -- ' + hViol.map(p => p.caseId + ' (H=' + p.itemH + ' cm)').join(', ') + " exceed this container's internal height of " + ct.h + ' cm.';
+    w.innerHTML = '&#x26A0; <strong>Height Violation</strong> -- ' + hViol.map(p => esc(p.caseId) + ' (H=' + p.itemH + ' cm)').join(', ') + " exceed this container's internal height of " + ct.h + ' cm.';
     div.appendChild(w);
   }
 
@@ -891,21 +891,21 @@ function renderContainer(bin, meta, num) {
   const tbody = document.createElement('tbody');
   packed.forEach(p => {
     const cc = clientColor(p.client);
-    const dgBadge = p.dg && p.dg !== 'none' ? '<span class="tag tag-dg">Class ' + p.dg + '</span>' : '--';
+    const dgBadge = p.dg && p.dg !== 'none' ? '<span class="tag tag-dg">Class ' + esc(p.dg) + '</span>' : '--';
     const exclIcon = p.exclusive ? ' <span class="tag tag-excl" title="Exclusive">&#x26BF;</span>' : '';
     const rotTag = p.rotated ? ' <span class="tag tag-r">rotated</span>' : '';
     const dims = p.origL + 'x' + p.origW + rotTag;
     const hCell = p.itemH ? String(p.itemH) + (p.itemH > ct.h ? ' <span style="color:#f44336;font-weight:700" title="Exceeds container height">&#x26A0;</span>' : '') : '--';
     const tr2 = document.createElement('tr');
     tr2.innerHTML =
-      '<td><span class="sw" style="background:' + p.color + '"></span> ' + p.caseId + '</td>' +
-      '<td>' + p.desc + '</td>' +
+      '<td><span class="sw" style="background:' + p.color + '"></span> ' + esc(p.caseId) + '</td>' +
+      '<td>' + esc(p.desc) + '</td>' +
       '<td>' + dims + '</td>' +
       '<td>' + hCell + '</td>' +
       '<td>' + (p.wt || '--') + '</td>' +
-      '<td><span class="tag" style="background:' + cc + '22;color:' + cc + ';border:1px solid ' + cc + '44">' + p.client + '</span>' + exclIcon + '</td>' +
+      '<td><span class="tag" style="background:' + cc + '22;color:' + cc + ';border:1px solid ' + cc + '44">' + esc(p.client) + '</span>' + exclIcon + '</td>' +
       '<td>' + dgBadge + '</td>' +
-      '<td>' + (p.un ? '<span class="tag tag-n">' + p.un + '</span>' : '--') + '</td>' +
+      '<td>' + (p.un ? '<span class="tag tag-n">' + esc(p.un) + '</span>' : '--') + '</td>' +
       '<td><span class="tag tag-n">x' + p.x + ' y' + p.y + '</span></td>';
     tbody.appendChild(tr2);
   });
